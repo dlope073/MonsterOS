@@ -345,24 +345,42 @@ iret
 ;---------------------------------------------------------------------------------------------------------
 
 ; Reads Each Character Until Enter Has Been Pressed. This ISR Can ECHO each Character
-; Params: Starting Address Of String
+; Params: AX Starting Address Of String
 ; This is a ISR no direct invoking
 int_block_input_echo:
 
 	pusha
 	
-	.again:
+	mov di, bx
+	mov cx, 0
+	
+	_again_:
 
+	cmp cx, 8 ; Prompt cannot accept more than 8 characters
+	je _max_reached ; We jump to end if cx equals to 8
+	
 	mov ah, 0
 	int 0x16
 	mov ah, 0Eh ; ah = 0x0e
 	int 0x10 ; print character
-	cmp al, 0xD
-	je .end ; if al='\r' break from loop
+	cmp al, 0x8 ; compare al with backspace
+	je _ignore ; If backspace we ignore it and avoid adding into the buffer.
+	cmp al, 0xD ; compare with line feed
+	je _end_ ; if al='\r' break from loop
 	stosb ; Store Character Byte At AL Into [ES:DI] Then INCREMENTS DI
-	jmp .again ; else go back to the beginning of the loop
+	_ignore: 
+	inc cx ; cx++
+	jmp _again_ ; else go back to the beginning of the loop
 	
-	.end:	
+
+	
+	_max_reached:
+	
+	mov ah, 0Eh ; ah = 0x0e
+	mov al, 0xD
+	int 0x10 ; print character
+	
+	_end_:	
 	
 	mov al, 0
 	stosb

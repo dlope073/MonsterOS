@@ -1,6 +1,11 @@
-Run build.bat, if on a UNIX system, then create shell script that accomplishes the exact task. 
-To test OS, copy img.bin into the first few sectors of a blank VHD and run VirtualBox and boot from VHD. Or using low level disk acess copy the img.bin into a USB
-stick. 
+1. Run build.bat
+
+If on a UNIX like system please skip step 1 and create a simple shell script that accomplishes the exact thing. 
+
+If all builds well then you should see three BIN files, these cannot be booted straight off the bat. But you have two choices.
 
 
-Note: MonsterOS was designed to boot off of the hardisk and not a CD image or CD.
+Choice 1: Copy the img.bin at the beginning of a emtpy VHD file, and run VirtualBox and boot from the VHD file. This can be done easily with a hex editor.
+Choice 2: Using a hex editor or low-level disk acess tool copy the img.bin at the beginning of the USB stick you wish to boot. The USB has to be devoid of information. Which means all information including formmating has to be removed.
+
+Remember MonsterOS was designed to boot off a disk (Hardisk, USB stick, or VHD, NOT CD-ROM / CD image (ISO)).

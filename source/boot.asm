@@ -31,7 +31,7 @@ mov ax, 0204h ; AH = 02 (disk read), AL = 04 (number of sectors to read)
 int 13h
 
 
-;Load File Table located from disk into memory location 0x9e00
+;Load list of FILE structures off of disk starting at sector 4
 
 xor ax, ax
 mov es, ax    ; ES <- 0
