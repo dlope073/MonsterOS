@@ -1,0 +1,3 @@
+This directory contains the VirtualBox files to run MonsterOS on VirtualBox. If you like inside the MonsterOS folder
+there is the VHD Virtual Hard Disk Image which you can transfer to a USB stick and boot it from a USB stick and test it on 
+an actual machine. But MonsterOS isn't fully stable so be careful.
