@@ -1,0 +1,32 @@
+All programs that you would like for MonsterOS to run. Place them in the programs directory.
+
+Note: All MonsterOS programs have to be assembled by NASM. Please be aware that although  the program's extension is *.com. MS-DOS programs
+are NOT be binary compatiable. That means that MS-DOS interrupts are not available on MonsterOS. Please see list of software interrupts, that
+MonsterOS provides. 
+
+
+
+Here is a template for those who would like to write a program that will be run by MonsterOS.
+
+
+_start: ; Label name can techincally be anything because MonsterOS knows where to jump to the program
+
+
+;Write Program Code Routine Here
+
+
+ret ; Return is mandatory because control has to go back to operating system.
+
+; Here anything like constant strings, words, bytes, can go here. Or anything acceptable by NASM
+
+
+
+
+
+To assemble program type:
+
+nasm -f bin source.asm -o output.com
+
+Please NOTE that the output must be a maximum of 8 characters because MonsterOS's custom filesystem limits filenames to 8 characters.
+
+		
