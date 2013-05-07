@@ -6,7 +6,10 @@ MonsterOS provides.
 
 
 
-Here is a template for those who would like to write a program that will be run by MonsterOS.
+Here is a template below for those who would like to write a program that will be run by MonsterOS.
+
+
+=====================================================================================================================
 
 
 _start: ; Label name can techincally be anything because MonsterOS knows where to jump to the program
@@ -20,7 +23,7 @@ ret ; Return is mandatory because control has to go back to operating system.
 ; Here anything like constant strings, words, bytes, can go here. Or anything acceptable by NASM
 
 
-
+======================================================================================================================
 
 
 To assemble program type:

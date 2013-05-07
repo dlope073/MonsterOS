@@ -46,16 +46,16 @@ hang:
 	mov bh, 0
 	mov bl, 0xf
 
-	int 21h ; print ax=msg bl=blue
+	int 21h 
 
-	; Get Input
+	; Read From Keyboard  And Store String In Buffer
 	mov bx, buffer
-	int 22h ; Read From Keyboard  And Store String In Buffer
+	int 22h 
 	
 	mov bx, buffer
 	mov ax, only_internal_command
 	
-	int 30h ; string compare buffer and command
+	int 30h ; String Compare buffer and only_internal_command
 	
 	cmp dx, 0 
 	
@@ -72,7 +72,7 @@ hang:
 	mov cx, 8
 	
 	mov ax, buffer
-	int 24h ;ZERO(buffer)
+	int 24h ; Zero buffer
 	
 	jmp hang
 	
@@ -90,7 +90,7 @@ invalid:
 	mov cx, 8 ; buffer length 8
 	
 	mov ax, buffer
-	int 24h ;ZERO(buffer)
+	int 24h ;Zero buffer
 	
 
 	
