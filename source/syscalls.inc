@@ -94,15 +94,50 @@ mov [es:31h*4], dx
 mov ax, 0
 mov [es:31h*4 + 2], ax
 
+; Add another interrupt entry
+
+mov dx, int_list_files_from_file_table
+mov [es:32h*4], dx
+mov ax, 0
+mov [es:32h*4 + 2], ax
 
 popa
 
 ret
 
+;-----------------------------------------------------------------
+;Prints each file name from the file table located at 0x9e00
+
+int_list_files_from_file_table:
+
+pusha
+	
+	mov cx, 0x9e01
+	mov dx, 0
+_loop___:
+	cmp dx, 5
+	je _exit____ ; Exit loop because there are not more FILE structure entries
+	mov si, cx
+	mov al, byte[si]
+	cmp al, 0
+	je _exit____ ; Exit if null string is found
+	mov ax, cx
+	int 21h ; Print filename
+	int 23h ; Print new line
+	add cx, 0x200
+	inc dx
+	jmp _loop___
+
+_exit____:	
+
+popa 
+
+iret
 
 ;-----------------------------------------------------------------
 ; Loads Program into memory. Using the filename of the program.
 ; AX=Contains starting address of null-terminated string
+;
 int_load_program_by_filename:
 
 pusha
@@ -111,7 +146,10 @@ pusha
 	mov dx, 0
 _loop__:
 	cmp dx, 5
-	je _exit___ ; Exit loop because there are not more FILE structure entries
+	je no_program_found ; Exit loop because there are not more FILE structure entries
+	mov si, cx
+	cmp byte[si], 0
+	je no_program_found ; Exit if null string is found
 	mov bx, cx ; bx <- cx
 	int 30h
 	or dx, dx
@@ -120,12 +158,39 @@ _loop__:
 	inc dx
 	jmp _loop__
 	
+no_program_found:
 
+	mov ax, invalid_cmd
+	mov bx, 000fh
+	int 21h ; Print invalid command message
+
+jmp _exit___
+	
 found_program:
-
-add cx, 11
-call cx
-
+	add cx, 8
+	mov si, cx
+	cmp byte[si], 0
+	je exec ; if al == 0 then file is program needs to be executed
+	;else is text program 
+	jmp _exit___
+	
+exec:
+	copy_prog_in_mem: ; Copies program into 0x9999 because that is where all programs are loaded and executed
+			inc cx
+			mov bx, cx ; bx <- cx because cx cannot be used for this operation
+			mov di, 0x9999 ; Destination index is 0x9999 because that is where the program will be loaded
+			mov dx, 0 ; our counter
+			looop:
+			cmp dx, 502 ; 502 because 502 is the maximum number of bytes a program can be. Remember each file table entry occupies 512 bytes
+			je _call ; if dx = 502 then the program has been fully copied to the region in memory where it will be executed
+			mov  si, [bx] ; copy contents at address bx into source index
+			mov [di], si ; Move contents at source index and store it into the memory address at destination index
+			inc dx ; increment dx
+			inc di ; increment destination index
+			inc bx ; increment bx
+			jmp looop
+	_call:
+			call 0x9999 
 _exit___:
 	
 popa
@@ -138,6 +203,8 @@ iret
 ; AX=Address of String1 BX=Address of String2 
 ; Returns DX=0 equal any other value means not equal
 int_string_compare:
+
+push cx ; save cx
 
 int 25h ; Get String Length of String1
 mov dx, cx
@@ -160,6 +227,8 @@ doit:
 identical:
 	mov dx, 0
 finish_it:
+
+pop cx ; restore cx
 
 iret
 
@@ -368,8 +437,12 @@ int_block_input_echo:
 	cmp al, 0xD ; compare with line feed
 	je _end_ ; if al='\r' break from loop
 	stosb ; Store Character Byte At AL Into [ES:DI] Then INCREMENTS DI
+	jmp _again_ ; else go back to the beginning of the loop
 	_ignore: 
 	inc cx ; cx++
+	cmp di, bx
+	je _again_ ; if (di == buffer) we do not want to decrement di 
+	dec di
 	jmp _again_ ; else go back to the beginning of the loop
 	
 

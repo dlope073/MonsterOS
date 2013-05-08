@@ -1,0 +1,15 @@
+     1                                  [ORG 0x9999] ; All programs get loaded at 0x9999
+     2                                  
+     3                                  _start: ; ver.com's entry point label name can be anything really
+     4                                  
+     5 00000000 B8[0A00]                	mov ax, ver_str
+     6 00000003 B700                    	mov bh, 0
+     7 00000005 B30F                    	mov bl, 0xf
+     8 00000007 CD21                    	int 21h ; print 
+     9                                  	
+    10 00000009 C3                      ret ; Return back to control
+    11                                  
+    12 0000000A 4D6F6E737465724F53-     ver_str: db 'MonsterOS Version 1.0', 0
+    13 00000013 2056657273696F6E20-
+    14 0000001C 312E3000           
+    15                                  

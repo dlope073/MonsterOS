@@ -42,11 +42,6 @@ int 0x10
 
 hang:
 	
-	;mov ax, buffer
-	;mov bx, 8 ; Length
-	;int 24h ;ZERO(buffer)
-	
-
 	; Print Desired Message
 
 	mov ax, cli_msg
@@ -75,9 +70,36 @@ hang:
 	
 	cmp dx, 0 
 	
-	jne invalid
+	je clear_command
+	
+	mov bx, buffer
+	mov ax, internal_command_C
+	
+	int 30h ; string compare buffer and commandC
+	
+	cmp dx, 0 
+	
+	jne external_command
+	
+	
+list_command:
 
-clear_commmand:
+		int 23h ; Print newline
+
+		int 32h ; List files from file table
+		
+		jmp hang
+	
+external_command:
+
+		int 23h ; new line
+		mov ax, buffer
+		int 31h ; Check if buffer contains a valid filename and load and execute external command.
+		int 23h ; new line
+		jmp hang
+		
+
+clear_command:
 
 		; Clear Screen
 
@@ -97,24 +119,11 @@ help_command:
 		
 		jmp hang
 	
-invalid:
-	
-	int 23h ; Print newline
-
-	
-	mov ax, invalid_cmd
-	mov bx, 000fh
-	int 21h ; Print invalid command message
-
-	int 23h ; Print newline
-
-	
-	jmp hang
-	
 cli_msg: db 13, 10, 'MonsterOS> ', 0
-help_msg: db 'Welcome to the MonsterOS shell prompt.', 13, 10, 13, 10, 'MonsterOS shell prompt contains only two internal commands: help and clear.', 13, 10, 'This means that MonsterOS treats everything else that is not the help/clear command as an external command.', 13, 10, 'An external command is basically a filename of a file stored on the disk.', 10, 13, 'If the file is located on the disk it is executed if it is a program; else it is treated a text file and its contents are displayed.', 13, 10, 'If no file is found then a error message is displayed.', 0
+help_msg: db 'Welcome to the MonsterOS shell prompt.', 13, 10, 13, 10, 'MonsterOS shell prompt contains only two internal commands: help, clear, and list.', 13, 10, 'This means that MonsterOS treats everything else that is not the help/clear command as an external command.', 13, 10, 'An external command is basically a filename of a file stored on the disk.', 10, 13, 'If the file is located on the disk it is executed if it is a program; else it is treated a text file and its contents are displayed.', 13, 10, 'If no file is found then a error message is displayed.', 0
 internal_command_A: db 'help', 0
 internal_command_B: db 'clear', 0
+internal_command_C: db 'list', 0
 invalid_cmd: db 'Invalid Internal / External Command!',0
 buffer: times 8 db 0
 

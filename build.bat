@@ -11,6 +11,9 @@ echo on
 cd source 
 nasm -f bin boot.asm -o ..\bin\boot.bin 
 nasm -f bin os.asm -o ..\bin\os.bin -l ..\bin\os.lst
+cd programs
+nasm -f bin ver.asm -o ..\..\programs\ver.com  -l ..\..\programs\ver.lst
+cd ..
 cd ..
 cd bin
 copy /b boot.bin + os.bin img.bin
