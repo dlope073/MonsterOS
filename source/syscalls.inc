@@ -429,11 +429,16 @@ int_block_input_echo:
 	
 	_again_:
 
-	cmp cx, 8 ; Prompt cannot accept more than 8 characters
-	je _max_reached ; We jump to end if cx equals to 8
+	cmp cx, 12 ; Prompt cannot accept more than 12 characters
+	je _max_reached ; We jump to end if cx equals to 12
 	
 	mov ah, 0
 	int 0x16
+	cmp al, 0x8
+	jne print
+	cmp cx, 0
+	je _again_ ; Ignore print backspace if cursor is already at the beginning
+print:
 	mov ah, 0Eh ; ah = 0x0e
 	int 0x10 ; print character
 	cmp al, 0x8 ; compare al with backspace
@@ -441,9 +446,10 @@ int_block_input_echo:
 	cmp al, 0xD ; compare with line feed
 	je _end_ ; if al='\r' break from loop
 	stosb ; Store Character Byte At AL Into [ES:DI] Then INCREMENTS DI
+	inc cx ; cx++
 	jmp _again_ ; else go back to the beginning of the loop
 	_ignore: 
-	inc cx ; cx++
+	dec cx ; cx-- because we pressed backspace
 	cmp di, bx
 	je _again_ ; if (di == buffer) we do not want to decrement di 
 	dec di

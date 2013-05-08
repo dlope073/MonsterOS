@@ -19,5 +19,5 @@ cd ..
 cd bin
 copy /b boot.bin + os.bin img.bin
 cd ..
-MonsterOS-VHD-Builder "C:\Users\OSDEV\VirtualBox VMs\MonsterOS\hdisk.vhd"  C:\Users\OSDEV\OS-SRC\MonsterOS\bin\img.bin C:\Users\OSDEV\OS-SRC\MonsterOS\bin\file-table.bin
+MonsterOS-VHD-Builder C:\Users\OSDEV\Documents\GitHub\MonsterOS\vbox\MonsterOS\hdisk.vhd  C:\Users\OSDEV\Documents\GitHub\MonsterOS\bin\img.bin C:\Users\OSDEV\Documents\GitHub\MonsterOS\bin\file-table.bin
 pause
