@@ -38,7 +38,7 @@ mov es, ax    ; ES <- 0
 mov cx, 6     ; cylinder 0, sector 6
 mov dx, 0080h ; DH = 0 (head), drive = 80h (0th hard disk)
 mov bx, 0x9e00 ; segment offset of the buffer
-mov ax, 0205h ; AH = 02 (disk read), AL = 5 (number of sectors to read)
+mov ax, 020Ah ; AH = 02 (disk read), AL = 10 (number of sectors to read)
 int 13h
 
 

@@ -1,15 +1,23 @@
-     1                                  [ORG 0x9999] ; All programs get loaded at 0x9999
+     1                                  ;Copyright (c) 2013, Daniel Lopez All rights reserved.
      2                                  
-     3                                  _start: ; ver.com's entry point label name can be anything really
+     3                                  ;Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
      4                                  
-     5 00000000 B8[0A00]                	mov ax, ver_str
-     6 00000003 B700                    	mov bh, 0
-     7 00000005 B30F                    	mov bl, 0xf
-     8 00000007 CD21                    	int 21h ; print 
-     9                                  	
-    10 00000009 C3                      ret ; Return back to control
-    11                                  
-    12 0000000A 4D6F6E737465724F53-     ver_str: db 'MonsterOS Version 1.0', 0
-    13 00000013 2056657273696F6E20-
-    14 0000001C 312E3000           
-    15                                  
+     5                                  ;Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer. Redistributions in binary form must reproduce the above copyright notice, this list of co
+     6                                  
+     7                                  
+     8                                  
+     9                                  [ORG 0x9999] ; All programs get loaded at 0x9999
+    10                                  
+    11                                  _start: ; ver.com's entry point label name can be anything really
+    12                                  
+    13 00000000 B8[0A00]                	mov ax, ver_str
+    14 00000003 B700                    	mov bh, 0
+    15 00000005 B30F                    	mov bl, 0xf
+    16 00000007 CD21                    	int 21h ; print 
+    17                                  	
+    18 00000009 C3                      ret ; Return back to control
+    19                                  
+    20 0000000A 4D6F6E737465724F53-     ver_str: db 'MonsterOS Version 1.0', 0
+    21 00000013 2056657273696F6E20-
+    22 0000001C 312E3000           
+    23                                  

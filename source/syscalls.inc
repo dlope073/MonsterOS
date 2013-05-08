@@ -145,8 +145,8 @@ pusha
 	mov cx, 0x9e01
 	mov dx, 0
 _loop__:
-	cmp dx, 5
-	je no_program_found ; Exit loop because there are not more FILE structure entries
+	cmp dx, 10
+	je no_program_found ; Exit loop because there are no more FILE structure entries in the file table
 	mov si, cx
 	cmp byte[si], 0
 	je no_program_found ; Exit if null string is found
@@ -167,11 +167,15 @@ no_program_found:
 jmp _exit___
 	
 found_program:
-	add cx, 8
+	add cx, 13
 	mov si, cx
 	cmp byte[si], 0
 	je exec ; if al == 0 then file is program needs to be executed
-	;else is text program 
+	
+	inc cx
+	mov ax, cx
+	int 21h
+	
 	jmp _exit___
 	
 exec:
@@ -181,8 +185,8 @@ exec:
 			mov di, 0x9999 ; Destination index is 0x9999 because that is where the program will be loaded
 			mov dx, 0 ; our counter
 			looop:
-			cmp dx, 502 ; 502 because 502 is the maximum number of bytes a program can be. Remember each file table entry occupies 512 bytes
-			je _call ; if dx = 502 then the program has been fully copied to the region in memory where it will be executed
+			cmp dx, 497 ; 497 because 497 is the maximum number of bytes a program can be. Remember each file table entry occupies 512 bytes
+			je _call ; if dx = 497 then the program has been fully copied to the region in memory where it will be executed
 			mov  si, [bx] ; copy contents at address bx into source index
 			mov [di], si ; Move contents at source index and store it into the memory address at destination index
 			inc dx ; increment dx
