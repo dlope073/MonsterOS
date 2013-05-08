@@ -8,7 +8,7 @@ MonsterOS provides.
 
 Here is a template for those who would like to write a program that will be run by MonsterOS.
 
-
+[ORG 0x9999] ; All programs get loaded by the OS at 0x9999
 _start: ; Label name can techincally be anything because MonsterOS knows where to jump to the program
 
 
