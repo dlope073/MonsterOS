@@ -1,5 +1,5 @@
 echo off
-REM Copyright (c) 2013, Daniel Lopez
+REM Copyright (c) 2014, Daniel Lopez
 REM All rights reserved.
 
 REM Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
@@ -19,5 +19,8 @@ cd ..
 cd bin
 copy /b boot.bin + os.bin img.bin
 cd ..
-MonsterOS-VHD-Builder C:\Users\OSDEV\Documents\GitHub\MonsterOS\vbox\MonsterOS\hdisk.vhd  C:\Users\OSDEV\Documents\GitHub\MonsterOS\bin\img.bin C:\Users\OSDEV\Documents\GitHub\MonsterOS\bin\file-table.bin
+echo off
+REM Remember to change these paths according to your machine
+echo on
+MonsterOS-VHD-Builder C:\Users\user\Documents\GitHub\MonsterOS\vbox\MonsterOS\hdisk.vhd  C:\Users\user\Documents\GitHub\MonsterOS\bin\img.bin C:\Users\user\Documents\GitHub\MonsterOS\bin\file-table.bin
 pause

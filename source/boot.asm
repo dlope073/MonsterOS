@@ -1,4 +1,4 @@
-; Copyright (c) 2013, Daniel Lopez
+; Copyright (c) 2014, Daniel Lopez
 ;All rights reserved.
 ;
 ;Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
@@ -16,8 +16,8 @@ xor ax, ax ; make it zero
 mov ds, ax ; Data segment is zero
 
 ;Set desired video mode (Graphics Mode)
-mov ah, 0
-mov al, 3h
+mov ah, 00
+mov al, 01h
 int 10h
 
 ;Load OS from DISK at 0x7e00
@@ -38,7 +38,7 @@ mov es, ax    ; ES <- 0
 mov cx, 6     ; cylinder 0, sector 6
 mov dx, 0080h ; DH = 0 (head), drive = 80h (0th hard disk)
 mov bx, 0x9e00 ; segment offset of the buffer
-mov ax, 020Ah ; AH = 02 (disk read), AL = 10 (number of sectors to read)
+mov ax, 0220h ; AH = 02 (disk read), AL = 32 (number of sectors to read)
 int 13h
 
 

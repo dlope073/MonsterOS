@@ -6,7 +6,7 @@
 ** Use VBoxManage or the VirtualBox Manager GUI to make changes.
 -->
 <VirtualBox xmlns="http://www.innotek.de/VirtualBox-settings" version="1.12-windows">
-  <Machine uuid="{8dfe7344-856e-4b67-84c6-9c0bb2f72fb1}" name="MonsterOS" OSType="DOS" snapshotFolder="Snapshots" lastStateChange="2013-05-08T23:00:45Z">
+  <Machine uuid="{8dfe7344-856e-4b67-84c6-9c0bb2f72fb1}" name="MonsterOS" OSType="DOS" snapshotFolder="Snapshots" lastStateChange="2014-05-07T20:47:32Z">
     <MediaRegistry>
       <HardDisks>
         <HardDisk uuid="{01b0df59-8b7d-4c99-a381-ff9b224850ba}" location="hdisk.vhd" format="VHD" type="Normal"/>
@@ -15,15 +15,16 @@
       <FloppyImages/>
     </MediaRegistry>
     <ExtraData>
-      <ExtraDataItem name="GUI/LastCloseAction" value="powerOff"/>
+      <ExtraDataItem name="GUI/LastCloseAction" value="PowerOff"/>
       <ExtraDataItem name="GUI/LastGuestSizeHint" value="720,400"/>
-      <ExtraDataItem name="GUI/LastNormalWindowPosition" value="502,179,720,441"/>
+      <ExtraDataItem name="GUI/LastNormalWindowPosition" value="345,153,720,442"/>
     </ExtraData>
     <Hardware version="2">
       <CPU count="1" hotplug="false">
-        <HardwareVirtEx enabled="true" exclusive="false"/>
+        <HardwareVirtEx enabled="true"/>
         <HardwareVirtExNestedPaging enabled="true"/>
         <HardwareVirtExVPID enabled="true"/>
+        <HardwareVirtExUX enabled="true"/>
         <PAE enabled="false"/>
         <HardwareVirtExLargePages enabled="true"/>
         <HardwareVirtForce enabled="false"/>
@@ -39,7 +40,7 @@
         <Order position="4" device="None"/>
       </Boot>
       <Display VRAMSize="7" monitorCount="1" accelerate3D="false" accelerate2DVideo="false"/>
-      <VideoRecording enabled="false" file="Test.webm" horzRes="640" vertRes="480"/>
+      <VideoCapture/>
       <RemoteDisplay enabled="false" authType="Null" authTimeout="5000"/>
       <BIOS>
         <ACPI enabled="true"/>
@@ -54,6 +55,7 @@
         <Adapter slot="0" enabled="true" MACAddress="080027CC9387" cable="true" speed="0" type="Am79C973">
           <DisabledModes>
             <InternalNetwork name="intnet"/>
+            <NATNetwork name="NatNetwork"/>
           </DisabledModes>
           <NAT>
             <DNS pass-domain="true" use-proxy="false" use-host-resolver="false"/>
@@ -141,7 +143,9 @@
         <CardReader enabled="false"/>
       </EmulatedUSB>
       <Guest memoryBalloonSize="0"/>
-      <GuestProperties/>
+      <GuestProperties>
+        <GuestProperty name="/VirtualBox/HostInfo/GUI/LanguageID" value="en_US" timestamp="1399495502520032700" flags=""/>
+      </GuestProperties>
     </Hardware>
     <StorageControllers>
       <StorageController name="Floppy" type="I82078" PortCount="1" useHostIOCache="true" Bootable="true"/>

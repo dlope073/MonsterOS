@@ -44,7 +44,7 @@ _start:
 	int 21h
 	
 	mov ah, 00eh
-	mov al, 9
+	mov al, 20h
 	int 10h ; print tab
 	
 	mov ax, regsCX
@@ -58,7 +58,7 @@ _start:
 	int 21h
 	
 	mov ah, 00eh
-	mov al, 9
+	mov al, 20h
 	int 10h ; print tab
 	
 	mov ax, regsDX
@@ -72,7 +72,7 @@ _start:
 	int 21h
 	
 	mov ah, 00eh
-	mov al, 9
+	mov al, 20h
 	int 10h ; print tab
 	
 	mov ax, regsCS
@@ -86,7 +86,7 @@ _start:
 	int 21h
 	
 	mov ah, 00eh
-	mov al, 9
+	mov al, 20h
 	int 10h ; print tab
 	
 	mov ax, regsDS
@@ -100,7 +100,7 @@ _start:
 	int 21h
 	
 	mov ah, 00eh
-	mov al, 9
+	mov al, 20h
 	int 10h ; print tab
 	
 	mov ax, regsES
@@ -114,7 +114,7 @@ _start:
 	int 21h
 	
 	mov ah, 00eh
-	mov al, 9
+	mov al, 20h
 	int 10h ; print tab
 	
 		

@@ -1,4 +1,4 @@
-; Copyright (c) 2013, Daniel Lopez
+; Copyright (c) 2014, Daniel Lopez
 ;All rights reserved.
 ;
 ;Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
@@ -101,6 +101,21 @@ mov [es:32h*4], dx
 mov ax, 0
 mov [es:32h*4 + 2], ax
 
+; Add another interrupt entry
+
+mov dx, int_shutdown
+mov [es:33h*4], dx
+mov ax, 0
+mov [es:33h*4 + 2], ax
+
+
+; Add another interrupt entry
+
+mov dx, int_date
+mov [es:34h*4], dx
+mov ax, 0
+mov [es:34h*4 + 2], ax
+
 popa
 
 ret
@@ -115,7 +130,7 @@ pusha
 	mov cx, 0x9e01
 	mov dx, 0
 _loop___:
-	cmp dx, 5
+	cmp dx, 20h
 	je _exit____ ; Exit loop because there are not more FILE structure entries
 	mov si, cx
 	mov al, byte[si]
@@ -217,8 +232,7 @@ mov ax, bx
 int 25h
 pop ax
 cmp dx, cx
-jg doit ; dx > cx
-mov cx, dx
+je doit ; dx == cx
 
 doit:
 	mov si, ax
@@ -514,3 +528,87 @@ int_print:
 iret ; Return from interrupt
 
 ;------------------------------------------------------------------------------------------------------
+
+; ISR to Shutdown machine
+
+int_shutdown:
+
+pusha ; Save regs
+
+;Connect to APM API
+mov     ax,5301
+xor     bx,bx
+int     15
+
+;Try to set APM version (to 1.2)
+mov     ax, 530eh
+xor     bx,bx
+mov     cx,0102h
+int     15h
+
+;Turn off the system
+mov     ax,5307h
+mov     bx,0001h
+mov     cx,0003h
+int     15h
+
+popa ; Restore regs
+
+iret
+
+;------------------------------------------------------------------------------------------------------
+
+int_date:
+
+pusha
+
+xor ax, ax
+mov ah, 04h
+int 1ah
+
+jc done
+
+mov ah, 00
+mov al, dh
+
+int 26h ; Convert month to string
+
+mov ax, bx
+mov bx, 01h
+
+int 21h ; Print month
+
+mov ah, 0Eh
+mov al, '/'
+int 0x10 ; Print Date Separator
+
+mov ah, 00 
+mov al, dl
+
+int 26h ; Convert day to string
+
+mov ax, bx
+mov bx, 01h
+
+int 21h ; Print day
+
+mov ah, 0Eh
+mov al, '/'
+int 0x10 ; Print Date Separator
+
+mov ax, cx
+
+int 26h ; Convert year to string
+
+mov ax, bx
+mov bx, 01h
+
+int 21h ; Print year
+
+
+popa
+
+done:
+
+iret
+
