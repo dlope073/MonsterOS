@@ -17,10 +17,12 @@ nasm -f bin dbug.asm -o ..\..\programs\dbug.com
 cd ..
 cd ..
 cd bin
-copy /b boot.bin + os.bin img.bin
+copy /b boot.bin + os.bin + filesystem.bin hdisk.vhd 
 cd ..
 echo off
 REM Remember to change these paths according to your machine
+REM MonsterOS-VHD-Builder C:\Users\user\Documents\GitHub\MonsterOS\vbox\MonsterOS\hdisk.vhd  C:\Users\user\Documents\GitHub\MonsterOS\bin\img.bin C:\Users\user\Documents\GitHub\MonsterOS\bin\filesystem.bin
 echo on
-MonsterOS-VHD-Builder C:\Users\user\Documents\GitHub\MonsterOS\vbox\MonsterOS\hdisk.vhd  C:\Users\user\Documents\GitHub\MonsterOS\bin\img.bin C:\Users\user\Documents\GitHub\MonsterOS\bin\file-table.bin
+monsteros-vhd-builder.jar C:\Users\user\Documents\GitHub\MonsterOS\bin\hdisk.vhd C:\Users\user\Documents\GitHub\MonsterOS\vbox\MonsterOS\hdisk.vhd
+
 pause

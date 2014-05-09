@@ -11,7 +11,7 @@
     11                                  
     12                                  [ORG 0x7e00]
     13                                  
-    14 00000000 E9C502                  jmp main
+    14 00000000 E93903                  jmp main
     15                                  
     16                                  %include "syscalls.inc"
     17                              <1> ; Copyright (c) 2014, Daniel Lopez
@@ -35,890 +35,1053 @@
     35                              <1> 
     36                              <1> ; Add the interrupt entry 
     37                              <1> 
-    38 00000008 BA[5D02]            <1> mov dx, int_print 
+    38 00000008 BA[AA02]            <1> mov dx, int_print 
     39 0000000B 2689168400          <1> mov [es:21h*4], dx
     40 00000010 B80000              <1> mov ax, 0
     41 00000013 26A38600            <1> mov [es:21h*4 + 2], ax
     42                              <1> 
     43                              <1> ; Add another interrupt entry
     44                              <1> 
-    45 00000017 BA[0D02]            <1> mov dx, int_block_input_echo 
+    45 00000017 BA[5A02]            <1> mov dx, int_block_input_echo 
     46 0000001A 2689168800          <1> mov [es:22h*4], dx
     47 0000001F B80000              <1> mov ax, 0
     48 00000022 26A38A00            <1> mov [es:22h*4 + 2], ax
     49                              <1> 
     50                              <1> ; Add another interrupt entry
     51                              <1> 
-    52 00000026 BA[4E02]            <1> mov dx, int_print_newline 
+    52 00000026 BA[9B02]            <1> mov dx, int_print_newline 
     53 00000029 2689168C00          <1> mov [es:23h*4], dx
     54 0000002E B80000              <1> mov ax, 0
     55 00000031 26A38E00            <1> mov [es:23h*4 + 2], ax
     56                              <1> 
     57                              <1> ; Add another interrupt entry
     58                              <1> 
-    59 00000035 BA[FB01]            <1> mov dx, int_zero_buffer 
+    59 00000035 BA[4802]            <1> mov dx, int_zero_buffer 
     60 00000038 2689169000          <1> mov [es:24h*4], dx
     61 0000003D B80000              <1> mov ax, 0
     62 00000040 26A39200            <1> mov [es:24h*4 + 2], ax
     63                              <1> 
     64                              <1> ; Add another interrupt entry
     65                              <1> 
-    66 00000044 BA[EB01]            <1> mov dx, int_string_length 
+    66 00000044 BA[3802]            <1> mov dx, int_string_length 
     67 00000047 2689169400          <1> mov [es:25h*4], dx
     68 0000004C B80000              <1> mov ax, 0
     69 0000004F 26A39600            <1> mov [es:25h*4 + 2], ax
     70                              <1> 
     71                              <1> ; Add another interrupt entry
     72                              <1> 
-    73 00000053 BA[C701]            <1> mov dx, int_integer_to_string
+    73 00000053 BA[1402]            <1> mov dx, int_integer_to_string
     74 00000056 2689169800          <1> mov [es:26h*4], dx
     75 0000005B B80000              <1> mov ax, 0
     76 0000005E 26A39A00            <1> mov [es:26h*4 + 2], ax
     77                              <1> 
     78                              <1> ; Add another interrupt entry
     79                              <1> 
-    80 00000062 BA[BE01]            <1> mov dx, int_clear_screen
+    80 00000062 BA[0B02]            <1> mov dx, int_clear_screen
     81 00000065 2689169C00          <1> mov [es:27h*4], dx
     82 0000006A B80000              <1> mov ax, 0
     83 0000006D 26A39E00            <1> mov [es:27h*4 + 2], ax
     84                              <1> 
-    85                              <1> ; Add another interrupt entry
+    85                              <1> 
     86                              <1> 
-    87 00000071 BA[7A01]            <1> mov dx, int_check_file_struct
-    88 00000074 268916A000          <1> mov [es:28h*4], dx
-    89 00000079 B80000              <1> mov ax, 0
-    90 0000007C 26A3A200            <1> mov [es:28h*4 + 2], ax
-    91                              <1> 
-    92                              <1> ; Add another interrupt entry
+    87                              <1> ;Add another interrupt entry
+    88                              <1> 
+    89 00000071 BA[1503]            <1> mov dx, int_lbachs
+    90 00000074 268916A400          <1> mov [es:29h*4], dx
+    91 00000079 B80000              <1> mov ax, 0
+    92 0000007C 26A3A600            <1> mov [es:29h*4 + 2], ax
     93                              <1> 
-    94 00000080 BA[A201]            <1> mov dx, int_write_file_struct
-    95 00000083 268916A400          <1> mov [es:29h*4], dx
-    96 00000088 B80000              <1> mov ax, 0
-    97 0000008B 26A3A600            <1> mov [es:29h*4 + 2], ax
-    98                              <1> 
-    99                              <1> ; Add another interrupt entry
+    94                              <1> ; Add another interrupt entry
+    95                              <1> 
+    96 00000080 BA[EA01]            <1> mov dx, int_string_compare
+    97 00000083 268916C000          <1> mov [es:30h*4], dx
+    98 00000088 B80000              <1> mov ax, 0
+    99 0000008B 26A3C200            <1> mov [es:30h*4 + 2], ax
    100                              <1> 
-   101 0000008F BA[5901]            <1> mov dx, int_string_compare
-   102 00000092 268916C000          <1> mov [es:30h*4], dx
-   103 00000097 B80000              <1> mov ax, 0
-   104 0000009A 26A3C200            <1> mov [es:30h*4 + 2], ax
-   105                              <1> 
-   106                              <1> ; Add another interrupt entry
+   101                              <1> ; Add another interrupt entry
+   102                              <1> 
+   103 0000008F BA[0B01]            <1> mov dx, int_load_program_by_filename
+   104 00000092 268916C400          <1> mov [es:31h*4], dx
+   105 00000097 B80000              <1> mov ax, 0
+   106 0000009A 26A3C600            <1> mov [es:31h*4 + 2], ax
    107                              <1> 
-   108 0000009E BA[FF00]            <1> mov dx, int_load_program_by_filename
-   109 000000A1 268916C400          <1> mov [es:31h*4], dx
-   110 000000A6 B80000              <1> mov ax, 0
-   111 000000A9 26A3C600            <1> mov [es:31h*4 + 2], ax
-   112                              <1> 
-   113                              <1> ; Add another interrupt entry
+   108                              <1> ; Add another interrupt entry
+   109                              <1> 
+   110 0000009E BA[CD00]            <1> mov dx, int_list_files_at_current_dir
+   111 000000A1 268916C800          <1> mov [es:32h*4], dx
+   112 000000A6 B80000              <1> mov ax, 0
+   113 000000A9 26A3CA00            <1> mov [es:32h*4 + 2], ax
    114                              <1> 
-   115 000000AD BA[DC00]            <1> mov dx, int_list_files_from_file_table
-   116 000000B0 268916C800          <1> mov [es:32h*4], dx
-   117 000000B5 B80000              <1> mov ax, 0
-   118 000000B8 26A3CA00            <1> mov [es:32h*4 + 2], ax
-   119                              <1> 
-   120                              <1> ; Add another interrupt entry
+   115                              <1> ; Add another interrupt entry
+   116                              <1> 
+   117 000000AD BA[BA02]            <1> mov dx, int_shutdown
+   118 000000B0 268916CC00          <1> mov [es:33h*4], dx
+   119 000000B5 B80000              <1> mov ax, 0
+   120 000000B8 26A3CE00            <1> mov [es:33h*4 + 2], ax
    121                              <1> 
-   122 000000BC BA[6D02]            <1> mov dx, int_shutdown
-   123 000000BF 268916CC00          <1> mov [es:33h*4], dx
-   124 000000C4 B80000              <1> mov ax, 0
-   125 000000C7 26A3CE00            <1> mov [es:33h*4 + 2], ax
-   126                              <1> 
-   127                              <1> 
-   128                              <1> ; Add another interrupt entry
+   122                              <1> 
+   123                              <1> ; Add another interrupt entry
+   124                              <1> 
+   125 000000BC BA[D902]            <1> mov dx, int_date
+   126 000000BF 268916D000          <1> mov [es:34h*4], dx
+   127 000000C4 B80000              <1> mov ax, 0
+   128 000000C7 26A3D200            <1> mov [es:34h*4 + 2], ax
    129                              <1> 
-   130 000000CB BA[8C02]            <1> mov dx, int_date
-   131 000000CE 268916D000          <1> mov [es:34h*4], dx
-   132 000000D3 B80000              <1> mov ax, 0
-   133 000000D6 26A3D200            <1> mov [es:34h*4 + 2], ax
-   134                              <1> 
-   135 000000DA 61                  <1> popa
+   130 000000CB 61                  <1> popa
+   131                              <1> 
+   132 000000CC C3                  <1> ret
+   133                              <1> 
+   134                              <1> ;-----------------------------------------------------------------
+   135                              <1> ; AX=Sector Of Starting Directory (Root always 5)
    136                              <1> 
-   137 000000DB C3                  <1> ret
+   137                              <1> int_list_files_at_current_dir:
    138                              <1> 
-   139                              <1> ;-----------------------------------------------------------------
-   140                              <1> ;Prints each file name from the file table located at 0x9e00
-   141                              <1> 
-   142                              <1> int_list_files_from_file_table:
-   143                              <1> 
-   144 000000DC 60                  <1> pusha
-   145                              <1> 	
-   146 000000DD B9019E              <1> 	mov cx, 0x9e01
-   147 000000E0 BA0000              <1> 	mov dx, 0
-   148                              <1> _loop___:
-   149 000000E3 83FA20              <1> 	cmp dx, 20h
-   150 000000E6 7415                <1> 	je _exit____ ; Exit loop because there are not more FILE structure entries
-   151 000000E8 89CE                <1> 	mov si, cx
-   152 000000EA 8A04                <1> 	mov al, byte[si]
-   153 000000EC 3C00                <1> 	cmp al, 0
-   154 000000EE 740D                <1> 	je _exit____ ; Exit if null string is found
-   155 000000F0 89C8                <1> 	mov ax, cx
-   156 000000F2 CD21                <1> 	int 21h ; Print filename
-   157 000000F4 CD23                <1> 	int 23h ; Print new line
-   158 000000F6 81C10002            <1> 	add cx, 0x200
-   159 000000FA 42                  <1> 	inc dx
-   160 000000FB EBE6                <1> 	jmp _loop___
-   161                              <1> 
-   162                              <1> _exit____:	
-   163                              <1> 
-   164 000000FD 61                  <1> popa 
-   165                              <1> 
-   166 000000FE CF                  <1> iret
-   167                              <1> 
-   168                              <1> ;-----------------------------------------------------------------
-   169                              <1> ; Loads Program into memory. Using the filename of the program.
-   170                              <1> ; AX=Contains starting address of null-terminated string
-   171                              <1> ;
-   172                              <1> int_load_program_by_filename:
-   173                              <1> 
-   174 000000FF 60                  <1> pusha
+   139 000000CD 60                  <1> pusha
+   140                              <1> 
+   141 000000CE CD29                <1> 	int 29h 
+   142                              <1> 
+   143 000000D0 8A2E[9104]          <1> 	mov ch, byte[c] ; ch <- cylinder
+   144 000000D4 8A0E[9504]          <1> 	mov cl, byte[s] ; cl <- sector
+   145 000000D8 31C0                <1> 	xor ax, ax
+   146 000000DA 8EC0                <1> 	mov es, ax    ; ES <- 0
+   147 000000DC 8A36[9304]          <1> 	mov dh, byte[h]
+   148 000000E0 B280                <1> 	mov dl, 80h ; DH = 0 (head), drive = 80h (0th hard disk)
+   149 000000E2 BB009E              <1> 	mov bx, 0x9e00 ; segment offset of the buffer
+   150 000000E5 B80102              <1> 	mov ax, 0201h ; AH = 02 (disk read), AL = 01 (number of sectors to read)
+   151 000000E8 CD13                <1> 	int 13h
+   152                              <1> 	
+   153 000000EA B9019E              <1> 	mov cx, 0x9e01
+   154 000000ED BA0000              <1> 	mov dx, 0
+   155                              <1> _loop___:
+   156 000000F0 83FA2E              <1> 	cmp dx, 46
+   157 000000F3 7414                <1> 	je _exit____ ; Exit loop because there are not more FILE structure entries
+   158 000000F5 89CE                <1> 	mov si, cx
+   159 000000F7 8A04                <1> 	mov al, byte[si]
+   160 000000F9 3C00                <1> 	cmp al, 0
+   161 000000FB 740C                <1> 	je _exit____ ; Exit if null string is found
+   162 000000FD 89C8                <1> 	mov ax, cx
+   163 000000FF CD21                <1> 	int 21h ; Print filename
+   164 00000101 CD23                <1> 	int 23h ; Print new line
+   165 00000103 83C10B              <1> 	add cx, 11
+   166 00000106 42                  <1> 	inc dx
+   167 00000107 EBE7                <1> 	jmp _loop___
+   168                              <1> 
+   169                              <1> _exit____:	
+   170                              <1> 
+   171 00000109 61                  <1> popa 
+   172                              <1> 
+   173 0000010A CF                  <1> iret
+   174                              <1> 
    175                              <1> 
-   176 00000100 B9019E              <1> 	mov cx, 0x9e01
-   177 00000103 BA0000              <1> 	mov dx, 0
-   178                              <1> _loop__:
-   179 00000106 83FA0A              <1> 	cmp dx, 10
-   180 00000109 7416                <1> 	je no_program_found ; Exit loop because there are no more FILE structure entries in the file table
-   181 0000010B 89CE                <1> 	mov si, cx
-   182 0000010D 803C00              <1> 	cmp byte[si], 0
-   183 00000110 740F                <1> 	je no_program_found ; Exit if null string is found
-   184 00000112 89CB                <1> 	mov bx, cx ; bx <- cx
-   185 00000114 CD30                <1> 	int 30h
-   186 00000116 09D2                <1> 	or dx, dx
-   187 00000118 7411                <1> 	jz found_program ; If strings match then jump to found_program and start executing the program from memory
-   188 0000011A 81C10002            <1> 	add cx, 0x200
-   189 0000011E 42                  <1> 	inc dx
-   190 0000011F EBE5                <1> 	jmp _loop__
-   191                              <1> 	
-   192                              <1> no_program_found:
-   193                              <1> 
-   194 00000121 B8[7106]            <1> 	mov ax, invalid_cmd
-   195 00000124 BB0F00              <1> 	mov bx, 000fh
-   196 00000127 CD21                <1> 	int 21h ; Print invalid command message
-   197                              <1> 
-   198 00000129 EB2C                <1> jmp _exit___
-   199                              <1> 	
-   200                              <1> found_program:
-   201 0000012B 83C10D              <1> 	add cx, 13
-   202 0000012E 89CE                <1> 	mov si, cx
-   203 00000130 803C00              <1> 	cmp byte[si], 0
-   204 00000133 7407                <1> 	je exec ; if al == 0 then file is program needs to be executed
-   205                              <1> 	
-   206 00000135 41                  <1> 	inc cx
-   207 00000136 89C8                <1> 	mov ax, cx
-   208 00000138 CD21                <1> 	int 21h
-   209                              <1> 	
-   210 0000013A EB1B                <1> 	jmp _exit___
-   211                              <1> 	
-   212                              <1> exec:
-   213                              <1> 	copy_prog_in_mem: ; Copies program into 0x9999 because that is where all programs are loaded and executed
-   214 0000013C 41                  <1> 			inc cx
-   215 0000013D 89CB                <1> 			mov bx, cx ; bx <- cx because cx cannot be used for this operation
-   216 0000013F BF9999              <1> 			mov di, 0x9999 ; Destination index is 0x9999 because that is where the program will be loaded
-   217 00000142 BA0000              <1> 			mov dx, 0 ; our counter
-   218                              <1> 			looop:
-   219 00000145 81FAF101            <1> 			cmp dx, 497 ; 497 because 497 is the maximum number of bytes a program can be. Remember each file table entry occupies 512 bytes
-   220 00000149 7409                <1> 			je _call ; if dx = 497 then the program has been fully copied to the region in memory where it will be executed
-   221 0000014B 8B37                <1> 			mov  si, [bx] ; copy contents at address bx into source index
-   222 0000014D 8935                <1> 			mov [di], si ; Move contents at source index and store it into the memory address at destination index
-   223 0000014F 42                  <1> 			inc dx ; increment dx
-   224 00000150 47                  <1> 			inc di ; increment destination index
-   225 00000151 43                  <1> 			inc bx ; increment bx
-   226 00000152 EBF1                <1> 			jmp looop
-   227                              <1> 	_call:
-   228 00000154 E8(9999)            <1> 			call 0x9999 
-   229                              <1> _exit___:
+   176                              <1> 
+   177                              <1> ;-----------------------------------------------------------------
+   178                              <1> ; Loads Program into memory. Using the filename of the program.
+   179                              <1> ; BX=Contains starting address of null-terminated string 
+   180                              <1> int_load_program_by_filename:
+   181                              <1> 
+   182 0000010B 60                  <1> pusha
+   183                              <1> 
+   184                              <1> 
+   185 0000010C B400                <1> 	mov ah, 0
+   186 0000010E A0[2A08]            <1> 	mov al, byte[current_sector]
+   187 00000111 CD29                <1> 	int 29h ; lbachs
+   188                              <1> 
+   189                              <1> 	
+   190 00000113 53                  <1> 	push bx
+   191 00000114 8A2E[9104]          <1> 	mov ch, byte[c] ; ch <- cylinder
+   192 00000118 8A0E[9504]          <1> 	mov cl, byte[s] ; cl <- sector
+   193 0000011C 31C0                <1> 	xor ax, ax
+   194 0000011E 8EC0                <1> 	mov es, ax    ; ES <- 0
+   195 00000120 8A36[9304]          <1> 	mov dh, byte[h]
+   196 00000124 B280                <1> 	mov dl, 80h ; DH = 0 (head), drive = 80h (0th hard disk)
+   197 00000126 BB009E              <1> 	mov bx, 0x9e00 ; segment offset of the buffer
+   198 00000129 B80102              <1> 	mov ax, 0201h ; AH = 02 (disk read), AL = 01 (number of sectors to read)
+   199 0000012C CD13                <1> 	int 13h
+   200 0000012E 5B                  <1> 	pop bx
+   201                              <1> 	
+   202 0000012F B9019E              <1> 	mov cx, 0x9e01
+   203 00000132 BA0000              <1> 	mov dx, 0
+   204                              <1> _loop1___:
+   205 00000135 83FA2E              <1> 	cmp dx, 46
+   206 00000138 7422                <1> 	je  no_program_found; Exit loop because there are no more FILE structure entries
+   207 0000013A 89CE                <1> 	mov si, cx
+   208 0000013C 8A04                <1> 	mov al, byte[si]
+   209 0000013E 3C00                <1> 	cmp al, 0
+   210 00000140 741A                <1> 	je  no_program_found; Exit if null string is found
+   211 00000142 89C8                <1> 	mov ax, cx
+   212                              <1> 	
+   213                              <1> 
+   214                              <1> 
+   215                              <1> 	; Copy a filename to temp as it will be used later
+   216 00000144 51                  <1> 	push cx
+   217 00000145 BF[2C08]            <1> 	mov di, temp
+   218 00000148 89C6                <1> 	mov si, ax
+   219 0000014A B90900              <1> 	mov cx, 9
+   220 0000014D F3A4                <1> 	rep movsb
+   221 0000014F 59                  <1> 	pop cx
+   222                              <1> 	
+   223 00000150 CD30                <1> 	int 30h
+   224 00000152 09D2                <1> 	or dx, dx
+   225 00000154 7410                <1> 	jz found_program
+   226 00000156 83C10B              <1> 	add cx, 11
+   227 00000159 42                  <1> 	inc dx
+   228                              <1> 	
+   229                              <1> 
    230                              <1> 	
-   231 00000157 61                  <1> popa
-   232                              <1> 
-   233                              <1> 
-   234 00000158 CF                  <1> iret
-   235                              <1> 
-   236                              <1> ;-----------------------------------------------------------------
-   237                              <1> ; Compares two strings
-   238                              <1> ; AX=Address of String1 BX=Address of String2 
-   239                              <1> ; Returns DX=0 equal any other value means not equal
-   240                              <1> int_string_compare:
-   241                              <1> 
-   242 00000159 51                  <1> push cx ; save cx
-   243                              <1> 
-   244 0000015A CD25                <1> int 25h ; Get String Length of String1
-   245 0000015C 89CA                <1> mov dx, cx
-   246 0000015E 50                  <1> push ax ; save ax
-   247 0000015F 89D8                <1> mov ax, bx
-   248 00000161 CD25                <1> int 25h
-   249 00000163 58                  <1> pop ax
-   250 00000164 39CA                <1> cmp dx, cx
-   251 00000166 7400                <1> je doit ; dx == cx
-   252                              <1> 
-   253                              <1> doit:
-   254 00000168 89C6                <1> 	mov si, ax
-   255 0000016A 89DF                <1> 	mov di, bx
-   256 0000016C F3A6                <1> 	rep cmpsb
-   257 0000016E 7405                <1> 	je identical
-   258                              <1> 
-   259 00000170 BA0100              <1> 	mov dx, 1
-   260 00000173 EB03                <1> 	jmp finish_it
-   261                              <1> identical:
-   262 00000175 BA0000              <1> 	mov dx, 0
-   263                              <1> finish_it:
-   264                              <1> 
-   265 00000178 59                  <1> pop cx ; restore cx
-   266                              <1> 
-   267 00000179 CF                  <1> iret
-   268                              <1> 
-   269                              <1> ;-----------------------------------------------------------------
-   270                              <1> ; Checks To See If An Existing FILE structure exists on a specific sector on the disk
-   271                              <1> ; Params: AX = Sector To Check If FILE 
-   272                              <1> ; Returns The Status In AX. If AX is zero there is an existing FILE structure currently on the disk.
-   273                              <1> ; Any other value would mean it is safe to write a FILE structure at that sector
-   274                              <1> int_check_file_struct:
-   275                              <1> 
-   276 0000017A 51                  <1> push cx
-   277 0000017B 06                  <1> push es
-   278 0000017C 52                  <1> push dx
-   279 0000017D 53                  <1> push bx
-   280                              <1> 
-   281 0000017E 89C1                <1> mov cx, ax    ; Sector ax
-   282 00000180 31C0                <1> xor ax, ax
-   283 00000182 8EC0                <1> mov es, ax    ; ES <- 0
-   284 00000184 BA8000              <1> mov dx, 0080h ; DH = 0 (head), drive = 80h (0th hard disk)
-   285 00000187 BB0020              <1> mov bx, 2000h ; segment offset of the buffer
-   286 0000018A B80102              <1> mov ax, 0201h ; AH = 02 (disk read), AL = 01 (number of sectors to read)
-   287 0000018D CD13                <1> int 13h
-   288                              <1> 
-   289 0000018F 8B0F                <1> mov cx, [bx]
-   290 00000191 83F969              <1> cmp cx, 0x69
-   291 00000194 7405                <1> je file_exists
-   292                              <1> 
-   293 00000196 B80100              <1> mov ax, 1
-   294                              <1> 
-   295 00000199 EB02                <1> jmp __exit ; File doesnt exist
-   296                              <1> 
-   297                              <1> file_exists:
-   298                              <1> 
-   299 0000019B 31C0                <1> xor ax, ax
-   300                              <1> 
-   301                              <1> __exit:
-   302                              <1> 
+   231 0000015A EBD9                <1> 	jmp _loop1___
+   232                              <1> 	
+   233                              <1> no_program_found:
+   234                              <1> 
+   235 0000015C B8[C507]            <1> 	mov ax, invalid_cmd
+   236 0000015F CD21                <1> 	int 21h
+   237 00000161 CD23                <1> 	int 23h
+   238 00000163 E98200              <1> 	jmp _exit1____
+   239                              <1> 	
+   240                              <1> 
+   241                              <1> found_program:
+   242                              <1> 
+   243 00000166 89CB                <1> 	  mov bx, cx
+   244 00000168 807FFFFF            <1> 	  cmp byte[bx-1], 0xff
+   245                              <1> 
+   246                              <1> 	  
+   247 0000016C 742C                <1> 	  je its_a_directory
+   248                              <1> 	  
+   249 0000016E 89CB                <1> 	  mov bx, cx
+   250                              <1> 	  
+   251 00000170 83C309              <1> 	  add bx, 9
+   252                              <1> 	  	  
+   253 00000173 B400                <1> 	  mov ah, 0
+   254 00000175 8A07                <1> 	  mov al, byte[bx]
+   255 00000177 CD29                <1> 	  int 29h ; lbachs	
+   256                              <1> 	  
+   257                              <1> 	
+   258 00000179 8A2E[9104]          <1> 	  mov ch, byte[c] ; ch <- cylinder
+   259 0000017D 8A0E[9504]          <1> 	  mov cl, byte[s] ; cl <- sector
+   260 00000181 31C0                <1> 	  xor ax, ax
+   261 00000183 8EC0                <1> 	  mov es, ax    ; ES <- 0
+   262 00000185 8A36[9304]          <1> 	  mov dh, byte[h] 
+   263 00000189 B280                <1> 	  mov dl, 80h ; DH = pointed by h (head), drive = 80h (0th hard disk)
+   264 0000018B B402                <1> 	  mov ah, 02h
+   265 0000018D 8A47F6              <1> 	  mov al, byte[bx-10]         ; AH = 02 (disk read), AL = At address bx-10 (number of sectors to read)
+   266 00000190 BB9999              <1> 	  mov bx, 0x9999 ; segment offset of the buffer
+   267                              <1>      
+   268                              <1> 	 
+   269 00000193 CD13                <1> 	  int 13h
+   270                              <1> 
+   271                              <1> 	 
+   272 00000195 E8(9999)            <1> 	  call 0x9999
+   273                              <1> 	  
+   274 00000198 EB4E                <1> 	  jmp _exit1____
+   275                              <1> 	  
+   276                              <1> its_a_directory:
+   277                              <1> 
+   278 0000019A 53                  <1> 	push bx
+   279 0000019B BB[2A08]            <1> 	mov bx, current_sector
+   280 0000019E 31C0                <1> 	xor ax, ax
+   281 000001A0 8A07                <1> 	mov al, byte[bx]
+   282 000001A2 BB[2B08]            <1> 	mov bx, previous_sector
+   283 000001A5 8807                <1> 	mov byte[bx], al ; Swap previous_sector and current_sector
+   284 000001A7 5B                  <1> 	pop bx
+   285                              <1> 
+   286 000001A8 89CB                <1> 	mov bx, cx
+   287 000001AA 8A5709              <1> 	mov dl, byte[bx+9]
+   288 000001AD B700                <1> 	mov bh, 00
+   289 000001AF 88D3                <1> 	mov bl, dl
+   290 000001B1 881E[2A08]          <1> 	mov byte[current_sector], bl ; Update current sector 
+   291                              <1> 
+   292 000001B5 E8B902              <1> 	call zero_buffer
+   293 000001B8 B8[E504]            <1> 	mov ax, dir_found_msg
+   294 000001BB CD21                <1> 	int 21h 
+   295 000001BD BB[B508]            <1> 	mov bx, buffer
+   296 000001C0 CD22                <1>     int 22h ; Read From Keyboard  And Store String In Buffer
+   297 000001C2 803F6E              <1> 	cmp byte[bx], 'n'
+   298 000001C5 7421                <1> 	je _exit1____
+   299 000001C7 803F79              <1> 	cmp byte[bx], 'y'	
+   300 000001CA 751C                <1> 	jne _exit1____
+   301                              <1> 	
+   302                              <1> change_cwd:
    303                              <1> 
-   304 0000019D 5B                  <1> pop bx
-   305 0000019E 5A                  <1> pop dx
-   306 0000019F 07                  <1> pop es
-   307 000001A0 59                  <1> pop cx
+   304 000001CC BE[7508]            <1> 	 mov si, pwd
+   305 000001CF BF[3508]            <1> 	 mov di, previous_pwd
+   306 000001D2 B94000              <1>  	 mov cx, 64 
+   307 000001D5 F3A4                <1> 	 rep movsb  ; transfer  pwd to previous pwd 
    308                              <1> 
-   309 000001A1 CF                  <1> iret
-   310                              <1> 
-   311                              <1> ;-----------------------------------------------------------------
-   312                              <1> ; Writes A FILE structure on the disk. 
-   313                              <1> ; Params: BX=Starting Address of FILE structure CX=Sector To Write
-   314                              <1> ; Returns AX= -1 if failed to write 
-   315                              <1> int_write_file_struct:
-   316                              <1> 
-   317 000001A2 60                  <1> pusha
-   318                              <1> 
-   319 000001A3 89D8                <1> 	mov ax, bx
-   320 000001A5 CD28                <1> 	int 28h
-   321 000001A7 09C0                <1> 	or ax, ax
-   322 000001A9 740E                <1> 	jz _error_
-   323                              <1> 	
-   324 000001AB 31C0                <1> 	xor ax, ax
-   325 000001AD 8EC0                <1> 	mov es, ax    ; ES <- 0
-   326 000001AF BA8000              <1> 	mov dx, 0080h ; DH = 0 (head), drive = 80h (0th hard disk)
-   327 000001B2 B80103              <1> 	mov ax, 0301h ; AH = 03 (disk write), AL = 01 (number of sectors to write)
-   328 000001B5 CD13                <1> 	int 13h
-   329                              <1> 	
-   330 000001B7 EB03                <1> 	jmp _____exit
-   331                              <1> 	
-   332                              <1> _error_:
+   309 000001D7 BB[7508]            <1> 	 mov bx, pwd ; bx <- pwd
+   310 000001DA C6075C              <1> 	 mov byte[bx], '\' ; Add path sep char
+   311 000001DD 43                  <1> 	 inc bx
+   312 000001DE 89DF                <1> 	 mov di, bx ; pwd destination
+   313 000001E0 BE[2C08]            <1> 	 mov si, temp  ; temp source
+   314 000001E3 B90900              <1> 	 mov cx, 9
+   315 000001E6 F3A4                <1> 	 rep movsb ; transfer temp to pwd
+   316                              <1> 	 
+   317                              <1> 
+   318                              <1> 	
+   319                              <1> _exit1____:
+   320                              <1> 	
+   321 000001E8 61                  <1> popa
+   322                              <1> 
+   323                              <1> 
+   324 000001E9 CF                  <1> iret
+   325                              <1> 
+   326                              <1> ;-----------------------------------------------------------------
+   327                              <1> ; Compares two strings
+   328                              <1> ; AX=Address of String1 BX=Address of String2 
+   329                              <1> ; Returns DX=0 equal any other value means not equal
+   330                              <1> int_string_compare:
+   331                              <1> 
+   332 000001EA 51                  <1> push cx ; save cx
    333                              <1> 
-   334 000001B9 B8FFFF              <1> 	mov ax, -1
-   335                              <1> 
-   336                              <1> _____exit:
-   337                              <1> 	
-   338 000001BC 61                  <1> popa
-   339                              <1> 
-   340 000001BD CF                  <1> iret 
-   341                              <1> 
-   342                              <1> ;-----------------------------------------------------------------
-   343                              <1> 
-   344                              <1> int_clear_screen:
-   345                              <1> 
-   346 000001BE 60                  <1> pusha
-   347 000001BF B400                <1> 		mov ah, 0
-   348 000001C1 B003                <1> 		mov al, 3h
-   349 000001C3 CD10                <1> 		int 10h
-   350                              <1> 
-   351 000001C5 61                  <1> popa
-   352                              <1> 
-   353 000001C6 CF                  <1> iret
+   334 000001EB CD25                <1> int 25h ; Get String Length of String1
+   335 000001ED 89CA                <1> mov dx, cx
+   336 000001EF 50                  <1> push ax ; save ax
+   337 000001F0 89D8                <1> mov ax, bx
+   338 000001F2 CD25                <1> int 25h
+   339 000001F4 58                  <1> pop ax
+   340 000001F5 39CA                <1> cmp dx, cx
+   341 000001F7 7400                <1> je doit ; dx == cx
+   342                              <1> 
+   343                              <1> doit:
+   344 000001F9 89C6                <1> 	mov si, ax
+   345 000001FB 89DF                <1> 	mov di, bx
+   346 000001FD F3A6                <1> 	rep cmpsb
+   347 000001FF 7405                <1> 	je identical
+   348                              <1> 
+   349 00000201 BA0100              <1> 	mov dx, 1
+   350 00000204 EB03                <1> 	jmp finish_it
+   351                              <1> identical:
+   352 00000206 BA0000              <1> 	mov dx, 0
+   353                              <1> finish_it:
    354                              <1> 
-   355                              <1> ;-----------------------------------------------------------------
+   355 00000209 59                  <1> pop cx ; restore cx
    356                              <1> 
-   357                              <1> ;Converts an integer into a string
-   358                              <1> ;Params: ax has the integer value, bx has the pointer to the string buffer
-   359                              <1> ;Returns nothing
-   360                              <1> ;This is an ISR
+   357 0000020A CF                  <1> iret
+   358                              <1> 
+   359                              <1> 
+   360                              <1> 
    361                              <1> 
-   362                              <1> int_integer_to_string:
-   363                              <1> 
-   364 000001C7 52                  <1>    push dx
-   365 000001C8 51                  <1>    push cx
-   366 000001C9 53                  <1>    push bx
-   367 000001CA 50                  <1>    push ax
-   368                              <1>    
-   369 000001CB 89DF                <1>    mov di, bx
-   370                              <1>    
-   371 000001CD BB0A00              <1>    mov bx, 10               ; base of the decimal system
-   372 000001D0 31C9                <1>    xor cx, cx               ; number of digits generated
-   373                              <1> os_int_to_string_next_divide:
-   374 000001D2 31D2                <1>    xor dx, dx               ; RAX extended to (RDX,RAX)
-   375 000001D4 F7F3                <1>    div bx                  ; divide by the number-base
-   376 000001D6 52                  <1>    push dx               ; save remainder on the stack
-   377 000001D7 41                  <1>    inc cx                  ; and count this remainder
-   378 000001D8 83F800              <1>    cmp ax, 0               ; was the quotient zero?
-   379 000001DB 75F5                <1>    jne os_int_to_string_next_divide      ; no, do another division
-   380                              <1> 
-   381                              <1> os_int_to_string_next_digit:
-   382 000001DD 58                  <1>    pop ax                  ; else pop recent remainder
-   383 000001DE 0430                <1>    add al, '0'               ; and convert to a numeral
-   384 000001E0 AA                  <1>    stosb                  ; store to memory-buffer
-   385 000001E1 E2FA                <1>    loop os_int_to_string_next_digit      ; again for other remainders
-   386 000001E3 30C0                <1>    xor al, al
-   387 000001E5 AA                  <1>    stosb                  ; Store the null terminator at the end of the string
-   388                              <1> 
-   389 000001E6 58                  <1>    pop ax
-   390 000001E7 5B                  <1>    pop bx
-   391 000001E8 59                  <1>    pop cx
-   392 000001E9 5A                  <1>    pop dx
+   362                              <1> 
+   363                              <1> ;-----------------------------------------------------------------
+   364                              <1> ; Clears the screen -- it requires no arguments 
+   365                              <1> 
+   366                              <1> 
+   367                              <1> int_clear_screen:
+   368                              <1> 
+   369 0000020B 60                  <1> pusha
+   370 0000020C B400                <1> 		mov ah, 0
+   371 0000020E B003                <1> 		mov al, 3h
+   372 00000210 CD10                <1> 		int 10h
+   373                              <1> 
+   374 00000212 61                  <1> popa
+   375                              <1> 
+   376 00000213 CF                  <1> iret
+   377                              <1> 
+   378                              <1> ;-----------------------------------------------------------------
+   379                              <1> 
+   380                              <1> ;Converts an integer into a string
+   381                              <1> ;Params: ax has the integer value, bx has the pointer to the string buffer
+   382                              <1> ;Returns nothing
+   383                              <1> ;This is an ISR
+   384                              <1> 
+   385                              <1> int_integer_to_string:
+   386                              <1> 
+   387 00000214 52                  <1>    push dx
+   388 00000215 51                  <1>    push cx
+   389 00000216 53                  <1>    push bx
+   390 00000217 50                  <1>    push ax
+   391                              <1>    
+   392 00000218 89DF                <1>    mov di, bx
    393                              <1>    
-   394 000001EA CF                  <1>    iret
-   395                              <1>    
-   396                              <1>    
-   397                              <1>    
-   398                              <1> ; -----------------------------------------------------------------------------
-   399                              <1> 
-   400                              <1> ;Computes String (Null Terminated) Length
-   401                              <1> ;Params: Starting Address Stored In AX
-   402                              <1> ;Returns Length  At CX
-   403                              <1> ;This is an ISR
-   404                              <1> int_string_length:
-   405                              <1> 
-   406 000001EB 50                  <1> push ax ; Save
-   407 000001EC 89C6                <1> 	mov si, ax
-   408 000001EE B90000              <1> 	mov cx, 0
-   409                              <1> 	loopy:
-   410                              <1> 	
-   411 000001F1 AC                  <1> 			lodsb
-   412 000001F2 08C0                <1> 			or al, al
-   413 000001F4 7403                <1> 			jz exity
-   414 000001F6 41                  <1> 			inc cx
-   415 000001F7 EBF8                <1> 			jmp loopy
-   416                              <1> 	exity:
-   417 000001F9 58                  <1> pop ax ; Restore
-   418                              <1> 
-   419 000001FA CF                  <1> iret
-   420                              <1> 
-   421                              <1> ;----------------------------------------------------------------------------------
+   394 0000021A BB0A00              <1>    mov bx, 10               ; base of the decimal system
+   395 0000021D 31C9                <1>    xor cx, cx               ; number of digits generated
+   396                              <1> os_int_to_string_next_divide:
+   397 0000021F 31D2                <1>    xor dx, dx               ; RAX extended to (RDX,RAX)
+   398 00000221 F7F3                <1>    div bx                  ; divide by the number-base
+   399 00000223 52                  <1>    push dx               ; save remainder on the stack
+   400 00000224 41                  <1>    inc cx                  ; and count this remainder
+   401 00000225 83F800              <1>    cmp ax, 0               ; was the quotient zero?
+   402 00000228 75F5                <1>    jne os_int_to_string_next_divide      ; no, do another division
+   403                              <1> 
+   404                              <1> os_int_to_string_next_digit:
+   405 0000022A 58                  <1>    pop ax                  ; else pop recent remainder
+   406 0000022B 0430                <1>    add al, '0'               ; and convert to a numeral
+   407 0000022D AA                  <1>    stosb                  ; store to memory-buffer
+   408 0000022E E2FA                <1>    loop os_int_to_string_next_digit      ; again for other remainders
+   409 00000230 30C0                <1>    xor al, al
+   410 00000232 AA                  <1>    stosb                  ; Store the null terminator at the end of the string
+   411                              <1> 
+   412 00000233 58                  <1>    pop ax
+   413 00000234 5B                  <1>    pop bx
+   414 00000235 59                  <1>    pop cx
+   415 00000236 5A                  <1>    pop dx
+   416                              <1>    
+   417 00000237 CF                  <1>    iret
+   418                              <1>    
+   419                              <1>    
+   420                              <1>    
+   421                              <1> ; -----------------------------------------------------------------------------
    422                              <1> 
-   423                              <1> ; Fills the buffer with zeroes.
-   424                              <1> ; Params: Starting Address of Buffer Stored In AX, BX Contains String Length
-   425                              <1> ; This is a ISR no direct invoking
-   426                              <1> 
-   427                              <1> int_zero_buffer:
+   423                              <1> ;Computes String (Null Terminated) Length
+   424                              <1> ;Params: Starting Address Stored In AX
+   425                              <1> ;Returns Length  At CX
+   426                              <1> ;This is an ISR
+   427                              <1> int_string_length:
    428                              <1> 
-   429 000001FB 60                  <1> pusha
-   430                              <1> 
-   431 000001FC 89C7                <1> 	mov di, ax
-   432 000001FE B90000              <1>     mov cx, 0
+   429 00000238 50                  <1> push ax ; Save
+   430 00000239 89C6                <1> 	mov si, ax
+   431 0000023B B90000              <1> 	mov cx, 0
+   432                              <1> 	loopy:
    433                              <1> 	
-   434                              <1> 	l:
-   435 00000201 B000                <1> 	mov al, 0
-   436 00000203 AA                  <1> 	stosb
-   437 00000204 39D9                <1> 	cmp cx, bx
-   438 00000206 7403                <1> 	je e ; if cx == bx goto e
-   439 00000208 41                  <1> 	inc cx ; cx++
-   440 00000209 EBF6                <1> 	jmp l ; Go back to the beginning of the loop
-   441                              <1> 	
-   442                              <1> 	e:
+   434 0000023E AC                  <1> 			lodsb
+   435 0000023F 08C0                <1> 			or al, al
+   436 00000241 7403                <1> 			jz exity
+   437 00000243 41                  <1> 			inc cx
+   438 00000244 EBF8                <1> 			jmp loopy
+   439                              <1> 	exity:
+   440 00000246 58                  <1> pop ax ; Restore
+   441                              <1> 
+   442 00000247 CF                  <1> iret
    443                              <1> 
-   444 0000020B 61                  <1> popa
+   444                              <1> ;----------------------------------------------------------------------------------
    445                              <1> 
-   446 0000020C CF                  <1> iret
-   447                              <1> 
-   448                              <1> ;---------------------------------------------------------------------------------------------------------
+   446                              <1> ; Fills the buffer with zeroes.
+   447                              <1> ; Params: Starting Address of Buffer Stored In AX, BX Contains String Length
+   448                              <1> ; This is a ISR no direct invoking
    449                              <1> 
-   450                              <1> ; Reads Each Character Until Enter Has Been Pressed. This ISR Can ECHO each Character
-   451                              <1> ; Params: AX Starting Address Of String
-   452                              <1> ; This is a ISR no direct invoking
-   453                              <1> int_block_input_echo:
-   454                              <1> 
-   455 0000020D 60                  <1> 	pusha
+   450                              <1> int_zero_buffer:
+   451                              <1> 
+   452 00000248 60                  <1> pusha
+   453                              <1> 
+   454 00000249 89C7                <1> 	mov di, ax
+   455 0000024B B90000              <1>     mov cx, 0
    456                              <1> 	
-   457 0000020E 89DF                <1> 	mov di, bx
-   458 00000210 B90000              <1> 	mov cx, 0
-   459                              <1> 	
-   460                              <1> 	_again_:
-   461                              <1> 
-   462 00000213 83F90C              <1> 	cmp cx, 12 ; Prompt cannot accept more than 12 characters
-   463 00000216 7425                <1> 	je _max_reached ; We jump to end if cx equals to 12
+   457                              <1> 	l:
+   458 0000024E B000                <1> 	mov al, 0
+   459 00000250 AA                  <1> 	stosb
+   460 00000251 39D9                <1> 	cmp cx, bx
+   461 00000253 7403                <1> 	je e ; if cx == bx goto e
+   462 00000255 41                  <1> 	inc cx ; cx++
+   463 00000256 EBF6                <1> 	jmp l ; Go back to the beginning of the loop
    464                              <1> 	
-   465 00000218 B400                <1> 	mov ah, 0
-   466 0000021A CD16                <1> 	int 0x16
-   467 0000021C 3C08                <1> 	cmp al, 0x8
-   468 0000021E 7505                <1> 	jne print
-   469 00000220 83F900              <1> 	cmp cx, 0
-   470 00000223 74EE                <1> 	je _again_ ; Ignore print backspace if cursor is already at the beginning
-   471                              <1> print:
-   472 00000225 B40E                <1> 	mov ah, 0Eh ; ah = 0x0e
-   473 00000227 CD10                <1> 	int 0x10 ; print character
-   474 00000229 3C08                <1> 	cmp al, 0x8 ; compare al with backspace
-   475 0000022B 7408                <1> 	je _ignore ; If backspace we ignore it and avoid adding into the buffer.
-   476 0000022D 3C0D                <1> 	cmp al, 0xD ; compare with line feed
-   477 0000022F 7412                <1> 	je _end_ ; if al='\r' break from loop
-   478 00000231 AA                  <1> 	stosb ; Store Character Byte At AL Into [ES:DI] Then INCREMENTS DI
-   479 00000232 41                  <1> 	inc cx ; cx++
-   480 00000233 EBDE                <1> 	jmp _again_ ; else go back to the beginning of the loop
-   481                              <1> 	_ignore: 
-   482 00000235 49                  <1> 	dec cx ; cx-- because we pressed backspace
-   483 00000236 39DF                <1> 	cmp di, bx
-   484 00000238 74D9                <1> 	je _again_ ; if (di == buffer) we do not want to decrement di 
-   485 0000023A 4F                  <1> 	dec di
-   486 0000023B EBD6                <1> 	jmp _again_ ; else go back to the beginning of the loop
+   465                              <1> 	e:
+   466                              <1> 
+   467 00000258 61                  <1> popa
+   468                              <1> 
+   469 00000259 CF                  <1> iret
+   470                              <1> 
+   471                              <1> ;---------------------------------------------------------------------------------------------------------
+   472                              <1> 
+   473                              <1> ; Reads Each Character Until Enter Has Been Pressed. This ISR Can ECHO each Character
+   474                              <1> ; Params: AX Starting Address Of String
+   475                              <1> ; This is a ISR no direct invoking
+   476                              <1> int_block_input_echo:
+   477                              <1> 
+   478 0000025A 60                  <1> 	pusha
+   479                              <1> 	
+   480 0000025B 89DF                <1> 	mov di, bx
+   481 0000025D B90000              <1> 	mov cx, 0
+   482                              <1> 	
+   483                              <1> 	_again_:
+   484                              <1> 
+   485 00000260 83F90C              <1> 	cmp cx, 12 ; Prompt cannot accept more than 12 characters
+   486 00000263 7425                <1> 	je _max_reached ; We jump to end if cx equals to 12
    487                              <1> 	
-   488                              <1> 
-   489                              <1> 	
-   490                              <1> 	_max_reached:
-   491                              <1> 	
-   492 0000023D B40E                <1> 	mov ah, 0Eh ; ah = 0x0e
-   493 0000023F B00D                <1> 	mov al, 0xD
-   494 00000241 CD10                <1> 	int 0x10 ; print character
-   495                              <1> 	
-   496                              <1> 	_end_:	
-   497                              <1> 	
-   498 00000243 B000                <1> 	mov al, 0
-   499 00000245 AA                  <1> 	stosb
-   500                              <1> 	
-   501 00000246 B40E                <1>     mov ah, 0Eh
-   502 00000248 B00A                <1> 	mov al, 10
-   503 0000024A CD10                <1> 	int 0x10 ; Print New Line
-   504                              <1> 	 
-   505 0000024C 61                  <1> 	popa
-   506                              <1> 
-   507 0000024D CF                  <1> iret 
-   508                              <1> 
-   509                              <1> ;--------------------------------------------------------------------------------------------------------------------------
-   510                              <1> 
-   511                              <1> ;Prints a single new line character
-   512                              <1> ; This is a ISR
-   513                              <1> int_print_newline:
-   514                              <1> 
-   515 0000024E 60                  <1> pusha
-   516                              <1> 
-   517 0000024F B40E                <1> 		mov ah, 0Eh
-   518 00000251 B00D                <1> 		mov al, 13
-   519 00000253 CD10                <1> 		int 0x10 ; Print New Line
-   520                              <1> 
-   521 00000255 B40E                <1> 		mov ah, 0Eh
-   522 00000257 B00A                <1> 		mov al, 10
-   523 00000259 CD10                <1> 		int 0x10 ; Print New Line
-   524                              <1> 		
-   525 0000025B 61                  <1> popa
-   526                              <1> 
-   527 0000025C CF                  <1> iret
-   528                              <1> 
-   529                              <1> ; Prints a null terminated string on the screen
-   530                              <1> ; This is ISR (Interrupt Service Routine)
-   531                              <1> int_print:
-   532 0000025D 60                  <1> 	pusha ; Store all working registers on the stack!
-   533 0000025E 89C6                <1> 	mov si, ax
-   534                              <1> 
-   535                              <1> 	.loop:
-   536 00000260 AC                  <1> 			lodsb
-   537 00000261 08C0                <1> 			or al, al
-   538 00000263 7406                <1> 			jz .endloop ; If character is a null character aka 0 then end the loop			
-   539 00000265 B40E                <1> 			mov ah, 0Eh ; ah = 0x0e
-   540 00000267 CD10                <1> 			int 0x10 ; print character
-   541 00000269 EBF5                <1> 			jmp .loop ; Go back to the beginning of the loop
-   542                              <1> 	.endloop:
-   543 0000026B 61                  <1> 	popa ; Pop all the saved registers on the stack and restore them!
-   544 0000026C CF                  <1> iret ; Return from interrupt
-   545                              <1> 
-   546                              <1> ;------------------------------------------------------------------------------------------------------
-   547                              <1> 
-   548                              <1> ; ISR to Shutdown machine
+   488 00000265 B400                <1> 	mov ah, 0
+   489 00000267 CD16                <1> 	int 0x16
+   490 00000269 3C08                <1> 	cmp al, 0x8
+   491 0000026B 7505                <1> 	jne print
+   492 0000026D 83F900              <1> 	cmp cx, 0
+   493 00000270 74EE                <1> 	je _again_ ; Ignore print backspace if cursor is already at the beginning
+   494                              <1> print:
+   495 00000272 B40E                <1> 	mov ah, 0Eh ; ah = 0x0e
+   496 00000274 CD10                <1> 	int 0x10 ; print character
+   497 00000276 3C08                <1> 	cmp al, 0x8 ; compare al with backspace
+   498 00000278 7408                <1> 	je _ignore ; If backspace we ignore it and avoid adding into the buffer.
+   499 0000027A 3C0D                <1> 	cmp al, 0xD ; compare with line feed
+   500 0000027C 7412                <1> 	je _end_ ; if al='\r' break from loop
+   501 0000027E AA                  <1> 	stosb ; Store Character Byte At AL Into [ES:DI] Then INCREMENTS DI
+   502 0000027F 41                  <1> 	inc cx ; cx++
+   503 00000280 EBDE                <1> 	jmp _again_ ; else go back to the beginning of the loop
+   504                              <1> 	_ignore: 
+   505 00000282 49                  <1> 	dec cx ; cx-- because we pressed backspace
+   506 00000283 39DF                <1> 	cmp di, bx
+   507 00000285 74D9                <1> 	je _again_ ; if (di == buffer) we do not want to decrement di 
+   508 00000287 4F                  <1> 	dec di
+   509 00000288 EBD6                <1> 	jmp _again_ ; else go back to the beginning of the loop
+   510                              <1> 	
+   511                              <1> 
+   512                              <1> 	
+   513                              <1> 	_max_reached:
+   514                              <1> 	
+   515 0000028A B40E                <1> 	mov ah, 0Eh ; ah = 0x0e
+   516 0000028C B00D                <1> 	mov al, 0xD
+   517 0000028E CD10                <1> 	int 0x10 ; print character
+   518                              <1> 	
+   519                              <1> 	_end_:	
+   520                              <1> 	
+   521 00000290 B000                <1> 	mov al, 0
+   522 00000292 AA                  <1> 	stosb
+   523                              <1> 	
+   524 00000293 B40E                <1>     mov ah, 0Eh
+   525 00000295 B00A                <1> 	mov al, 10
+   526 00000297 CD10                <1> 	int 0x10 ; Print New Line
+   527                              <1> 	 
+   528 00000299 61                  <1> 	popa
+   529                              <1> 
+   530 0000029A CF                  <1> iret 
+   531                              <1> 
+   532                              <1> ;--------------------------------------------------------------------------------------------------------------------------
+   533                              <1> 
+   534                              <1> ;Prints a single new line character
+   535                              <1> ; This is a ISR
+   536                              <1> int_print_newline:
+   537                              <1> 
+   538 0000029B 60                  <1> pusha
+   539                              <1> 
+   540 0000029C B40E                <1> 		mov ah, 0Eh
+   541 0000029E B00D                <1> 		mov al, 13
+   542 000002A0 CD10                <1> 		int 0x10 ; Print New Line
+   543                              <1> 
+   544 000002A2 B40E                <1> 		mov ah, 0Eh
+   545 000002A4 B00A                <1> 		mov al, 10
+   546 000002A6 CD10                <1> 		int 0x10 ; Print New Line
+   547                              <1> 		
+   548 000002A8 61                  <1> popa
    549                              <1> 
-   550                              <1> int_shutdown:
+   550 000002A9 CF                  <1> iret
    551                              <1> 
-   552 0000026D 60                  <1> pusha ; Save regs
-   553                              <1> 
-   554                              <1> ;Connect to APM API
-   555 0000026E B8B514              <1> mov     ax,5301
-   556 00000271 31DB                <1> xor     bx,bx
-   557 00000273 CD0F                <1> int     15
-   558                              <1> 
-   559                              <1> ;Try to set APM version (to 1.2)
-   560 00000275 B80E53              <1> mov     ax, 530eh
-   561 00000278 31DB                <1> xor     bx,bx
-   562 0000027A B90201              <1> mov     cx,0102h
-   563 0000027D CD15                <1> int     15h
-   564                              <1> 
-   565                              <1> ;Turn off the system
-   566 0000027F B80753              <1> mov     ax,5307h
-   567 00000282 BB0100              <1> mov     bx,0001h
-   568 00000285 B90300              <1> mov     cx,0003h
-   569 00000288 CD15                <1> int     15h
+   552                              <1> ; Prints a null terminated string on the screen
+   553                              <1> ; This is ISR (Interrupt Service Routine)
+   554                              <1> int_print:
+   555 000002AA 60                  <1> 	pusha ; Store all working registers on the stack!
+   556 000002AB 89C6                <1> 	mov si, ax
+   557                              <1> 
+   558                              <1> 	.loop:
+   559 000002AD AC                  <1> 			lodsb
+   560 000002AE 08C0                <1> 			or al, al
+   561 000002B0 7406                <1> 			jz .endloop ; If character is a null character aka 0 then end the loop			
+   562 000002B2 B40E                <1> 			mov ah, 0Eh ; ah = 0x0e
+   563 000002B4 CD10                <1> 			int 0x10 ; print character
+   564 000002B6 EBF5                <1> 			jmp .loop ; Go back to the beginning of the loop
+   565                              <1> 	.endloop:
+   566 000002B8 61                  <1> 	popa ; Pop all the saved registers on the stack and restore them!
+   567 000002B9 CF                  <1> iret ; Return from interrupt
+   568                              <1> 
+   569                              <1> ;------------------------------------------------------------------------------------------------------
    570                              <1> 
-   571 0000028A 61                  <1> popa ; Restore regs
+   571                              <1> ; ISR to Shutdown machine
    572                              <1> 
-   573 0000028B CF                  <1> iret
+   573                              <1> int_shutdown:
    574                              <1> 
-   575                              <1> ;------------------------------------------------------------------------------------------------------
+   575 000002BA 60                  <1> pusha ; Save regs
    576                              <1> 
-   577                              <1> int_date:
-   578                              <1> 
-   579 0000028C 60                  <1> pusha
-   580                              <1> 
-   581 0000028D 31C0                <1> xor ax, ax
-   582 0000028F B404                <1> mov ah, 04h
-   583 00000291 CD1A                <1> int 1ah
-   584                              <1> 
-   585 00000293 7232                <1> jc done
-   586                              <1> 
-   587 00000295 B400                <1> mov ah, 00
-   588 00000297 88F0                <1> mov al, dh
-   589                              <1> 
-   590 00000299 CD26                <1> int 26h ; Convert month to string
-   591                              <1> 
-   592 0000029B 89D8                <1> mov ax, bx
-   593 0000029D BB0100              <1> mov bx, 01h
-   594                              <1> 
-   595 000002A0 CD21                <1> int 21h ; Print month
-   596                              <1> 
-   597 000002A2 B40E                <1> mov ah, 0Eh
-   598 000002A4 B02F                <1> mov al, '/'
-   599 000002A6 CD10                <1> int 0x10 ; Print Date Separator
+   577                              <1> ;Connect to APM API
+   578 000002BB B8B514              <1> mov     ax,5301
+   579 000002BE 31DB                <1> xor     bx,bx
+   580 000002C0 CD0F                <1> int     15
+   581                              <1> 
+   582                              <1> ;Try to set APM version (to 1.2)
+   583 000002C2 B80E53              <1> mov     ax, 530eh
+   584 000002C5 31DB                <1> xor     bx,bx
+   585 000002C7 B90201              <1> mov     cx,0102h
+   586 000002CA CD15                <1> int     15h
+   587                              <1> 
+   588                              <1> ;Turn off the system
+   589 000002CC B80753              <1> mov     ax,5307h
+   590 000002CF BB0100              <1> mov     bx,0001h
+   591 000002D2 B90300              <1> mov     cx,0003h
+   592 000002D5 CD15                <1> int     15h
+   593                              <1> 
+   594 000002D7 61                  <1> popa ; Restore regs
+   595                              <1> 
+   596 000002D8 CF                  <1> iret
+   597                              <1> 
+   598                              <1> ;------------------------------------------------------------------------------------------------------
+   599                              <1> ; No parameters -- Reads RTC to get current date 
    600                              <1> 
-   601 000002A8 B400                <1> mov ah, 00 
-   602 000002AA 88D0                <1> mov al, dl
-   603                              <1> 
-   604 000002AC CD26                <1> int 26h ; Convert day to string
-   605                              <1> 
-   606 000002AE 89D8                <1> mov ax, bx
-   607 000002B0 BB0100              <1> mov bx, 01h
+   601                              <1> int_date:
+   602                              <1> 
+   603 000002D9 60                  <1> pusha
+   604                              <1> 
+   605 000002DA 31C0                <1> xor ax, ax
+   606 000002DC B404                <1> mov ah, 04h
+   607 000002DE CD1A                <1> int 1ah
    608                              <1> 
-   609 000002B3 CD21                <1> int 21h ; Print day
+   609 000002E0 7232                <1> jc done
    610                              <1> 
-   611 000002B5 B40E                <1> mov ah, 0Eh
-   612 000002B7 B02F                <1> mov al, '/'
-   613 000002B9 CD10                <1> int 0x10 ; Print Date Separator
-   614                              <1> 
-   615 000002BB 89C8                <1> mov ax, cx
-   616                              <1> 
-   617 000002BD CD26                <1> int 26h ; Convert year to string
+   611 000002E2 B400                <1> mov ah, 00
+   612 000002E4 88F0                <1> mov al, dh
+   613                              <1> 
+   614 000002E6 CD26                <1> int 26h ; Convert month to string
+   615                              <1> 
+   616 000002E8 89D8                <1> mov ax, bx
+   617 000002EA BB0100              <1> mov bx, 01h
    618                              <1> 
-   619 000002BF 89D8                <1> mov ax, bx
-   620 000002C1 BB0100              <1> mov bx, 01h
-   621                              <1> 
-   622 000002C4 CD21                <1> int 21h ; Print year
-   623                              <1> 
+   619 000002ED CD21                <1> int 21h ; Print month
+   620                              <1> 
+   621 000002EF B40E                <1> mov ah, 0Eh
+   622 000002F1 B02F                <1> mov al, '/'
+   623 000002F3 CD10                <1> int 0x10 ; Print Date Separator
    624                              <1> 
-   625 000002C6 61                  <1> popa
-   626                              <1> 
-   627                              <1> done:
-   628                              <1> 
-   629 000002C7 CF                  <1> iret
-   630                              <1> 
-   631                                  
-   632                                  
-   633                                  
-   634                                  main:
-   635                                  
-   636 000002C8 E838FD                  call init_int
-   637                                  
-   638 000002CB 31C0                    xor ax, ax ; make it zero
-   639 000002CD 8ED8                    mov ds, ax ; Data segment is zero
-   640 000002CF 8EC0                    mov es, ax
-   641                                  
-   642                                  
-   643                                  
-   644                                  ; Clear Screen
-   645                                  
-   646 000002D1 CD27                    int 27h
-   647                                  
-   648                                  
-   649                                  ; Print Startup Message
-   650                                  
-   651 000002D3 B8[A003]                mov ax, welcome_msg ; Store pointer to string AX register
-   652 000002D6 BB[D506]                mov bx, current_color ; Store current color in BX
-   653 000002D9 CD21                    int 21h ; Call print ISR
-   654                                  
-   655                                  
-   656                                  hang:
-   657                                  	
-   658                                  
-   659 000002DB E8B900                  	call zero_buffer
-   660                                  	
-   661                                  	; Print Desired Message
-   662                                  
-   663 000002DE B8[5204]                	mov ax, cli_msg
-   664 000002E1 BB[D506]                	mov bx, current_color
-   665                                  
-   666 000002E4 CD21                    	int 21h ; print ax=msg bl=blue
-   667                                  
-   668                                  	; Get Input
-   669 000002E6 BB[D606]                	mov bx, buffer
-   670 000002E9 CD22                    	int 22h ; Read From Keyboard  And Store String In Buffer
-   671                                  	
-   672 000002EB 803F00                  	cmp byte[bx], 0 ; Empty command are ignored therefore
-   673                                  	
-   674 000002EE 74EB                    	je hang
-   675                                  	
-   676 000002F0 BB[D606]                	mov bx, buffer
-   677 000002F3 B8[5306]                	mov ax, internal_command_A
-   678                                  	
-   679 000002F6 CD30                    	int 30h ; string compare buffer and commandA
-   680                                  	
-   681 000002F8 83FA00                  	cmp dx, 0 
-   682                                  	
-   683 000002FB 0F848900                	je help_command ;if (buffer == command) goto help_command
-   684                                  	
-   685 000002FF BB[D606]                	mov bx, buffer
-   686 00000302 B8[5806]                	mov ax, internal_command_B
-   687                                  	
-   688 00000305 CD30                    	int 30h ; string compare buffer and commandB
-   689                                  	
-   690 00000307 83FA00                  	cmp dx, 0 
-   691                                  	
-   692 0000030A 745D                    	je clear_command
-   693                                  	
-   694 0000030C BB[D606]                	mov bx, buffer
-   695 0000030F B8[5E06]                	mov ax, internal_command_C
-   696                                  	
-   697 00000312 CD30                    	int 30h ; string compare buffer and commandC
-   698                                  	
-   699 00000314 83FA00                  	cmp dx, 0 
-   700                                  	
-   701 00000317 741C                    	je list_command
-   702                                  	
-   703                                  	
-   704 00000319 BB[D606]                	mov bx, buffer
-   705 0000031C B8[6C06]                	mov ax, internal_command_E
-   706                                  	
-   707 0000031F CD30                    	int 30h ; string compare buffer and commandE
-   708                                  	
-   709 00000321 83FA00                  	cmp dx, 0 
-   710                                  	
-   711 00000324 7459                    	je date_command
-   712                                  	
-   713                                  	
-   714 00000326 BB[D606]                	mov bx, buffer
-   715 00000329 B8[6306]                	mov ax, internal_command_D
-   716                                  	
-   717 0000032C CD30                    	int 30h
-   718                                  	
-   719 0000032E 83FA00                  	cmp dx, 0
-   720                                  	
-   721 00000331 743B                    	je shutdown_command
-   722                                  	
-   723 00000333 EB10                    	jmp external_command
+   625 000002F5 B400                <1> mov ah, 00 
+   626 000002F7 88D0                <1> mov al, dl
+   627                              <1> 
+   628 000002F9 CD26                <1> int 26h ; Convert day to string
+   629                              <1> 
+   630 000002FB 89D8                <1> mov ax, bx
+   631 000002FD BB0100              <1> mov bx, 01h
+   632                              <1> 
+   633 00000300 CD21                <1> int 21h ; Print day
+   634                              <1> 
+   635 00000302 B40E                <1> mov ah, 0Eh
+   636 00000304 B02F                <1> mov al, '/'
+   637 00000306 CD10                <1> int 0x10 ; Print Date Separator
+   638                              <1> 
+   639 00000308 89C8                <1> mov ax, cx
+   640                              <1> 
+   641 0000030A CD26                <1> int 26h ; Convert year to string
+   642                              <1> 
+   643 0000030C 89D8                <1> mov ax, bx
+   644 0000030E BB0100              <1> mov bx, 01h
+   645                              <1> 
+   646 00000311 CD21                <1> int 21h ; Print year
+   647                              <1> 
+   648                              <1> 
+   649 00000313 61                  <1> popa
+   650                              <1> 
+   651                              <1> done:
+   652                              <1> 
+   653 00000314 CF                  <1> iret
+   654                              <1> 
+   655                              <1> ;--------------------------------------------------------------------------------------------------------------------------------------------------------
+   656                              <1> ; Converts LBA to CHS and stores the CHS result in memory
+   657                              <1> 
+   658                              <1> 
+   659                              <1> 
+   660                              <1> int_lbachs:
+   661                              <1> 
+   662 00000315 60                  <1> pusha
+   663                              <1> 
+   664 00000316 52                  <1>  push dx			; save the value in dx
+   665 00000317 31D2                <1>  xor dx,dx		; zero dx
+   666 00000319 8B1E[8F04]          <1>  mov bx, [sectorsPerTrack]	; move into place stp (lba all ready in place)
+   667 0000031D F7F3                <1>  div bx			; make the divide (ax/bx -> ax,dx)
+   668 0000031F 42                  <1>  inc dx			; add one to the remainder (sector value)
+   669 00000320 52                  <1>  push dx			; save the sector value on the stack
+   670                              <1> 
+   671 00000321 31D2                <1>  xor dx,dx		; zero dx
+   672 00000323 8B1E[9004]          <1>  mov bx, [heads]	; move numheads into place (numtracks all ready in place)
+   673 00000327 F7F3                <1>  div bx			; make the divide (ax/bx -> ax,dx)
+   674                              <1> 
+   675 00000329 89C1                <1>  mov cx,ax		; move ax to cx (cylinder)
+   676 0000032B 89D3                <1>  mov bx,dx		; move dx to bx (head)
+   677 0000032D 58                  <1>  pop ax			; take the last value entered on the stack off.
+   678                              <1> 			; it doesn't need to go into the same register.
+   679                              <1> 			; (sector)
+   680 0000032E 5A                  <1>  pop dx			; restore dx, just in case something important was
+   681                              <1> 			; originally in there before running this.
+   682 0000032F 890E[9104]          <1> mov word[c], cx
+   683 00000333 891E[9304]          <1> mov word[h], bx
+   684 00000337 A3[9504]            <1> mov word[s], ax			
+   685                              <1> 	
+   686 0000033A 61                  <1> popa 
+   687                              <1> 
+   688                              <1>  
+   689 0000033B CF                  <1>  iret
+   690                              <1> 
+   691                              <1> 
+   692                                  
+   693                                  
+   694                                  
+   695                                  main:
+   696                                  
+   697 0000033C E8C4FC                  call init_int
+   698                                  
+   699 0000033F 31C0                    xor ax, ax ; make it zero
+   700 00000341 8ED8                    mov ds, ax ; Data segment is zero
+   701 00000343 8EC0                    mov es, ax
+   702                                  
+   703 00000345 E83201                  call get_drive_geometry ; Get the drive geometry 
+   704                                  
+   705                                  ; Clear Screen
+   706                                  
+   707 00000348 CD27                    int 27h
+   708                                  
+   709                                  
+   710                                  ; Print Startup Message
+   711                                  
+   712 0000034A B8[3C05]                mov ax, welcome_msg ; Store pointer to string AX register
+   713 0000034D BB[2908]                mov bx, current_color ; Store current color in BX
+   714 00000350 CD21                    int 21h ; Call print ISR
+   715                                  
+   716 00000352 BB[7508]                mov bx, pwd
+   717 00000355 C6075C                  mov byte[bx], '\'
+   718                                  
+   719                                  
+   720                                  hang:
+   721                                  	
+   722                                  
+   723 00000358 E81601                  	call zero_buffer
    724                                  	
-   725                                  	
-   726                                  list_command:
-   727                                  
-   728 00000335 CD23                    		int 23h ; Print newline
+   725                                  	; Print Cli message plus current working path plus drive letter
+   726                                  
+   727 0000035B B8[A005]                	mov ax, cli_msg
+   728 0000035E BB[2908]                	mov bx, current_color
    729                                  
-   730 00000337 CD32                    		int 32h ; List files from file table
-   731                                  		
-   732 00000339 B8[0404]                		mov ax, system_file
-   733 0000033C BB[D506]                		mov bx, current_color
-   734 0000033F CD21                    		int 21h
-   735 00000341 CD23                    		int 23h
-   736                                  		
-   737 00000343 EB96                    		jmp hang
-   738                                  	
-   739                                  external_command:
-   740                                  
-   741                                  
-   742 00000345 BB[D606]                		mov bx, buffer
-   743 00000348 B8[0404]                		mov ax, system_file
-   744 0000034B CD30                    		int 30h
-   745                                  
-   746                                  		
-   747 0000034D 83FA00                  		cmp dx, 00h
-   748                                  		
-   749 00000350 750B                    		jne not_a_system_file
-   750                                  		
-   751 00000352 B8[0F04]                		mov ax, error_system_file
-   752 00000355 BB[D506]                		mov bx, current_color
-   753 00000358 CD21                    		int 21h
-   754                                  		
-   755 0000035A E97EFF                  		jmp hang
-   756                                  		
-   757                                  not_a_system_file:
-   758                                  		
-   759 0000035D CD23                    		int 23h ; new line
-   760 0000035F B8[D606]                		mov ax, buffer
-   761 00000362 CD31                    		int 31h ; Check if buffer contains a valid filename and load and execute external command.
-   762 00000364 CD23                    		int 23h ; new line
-   763                                  		
-   764 00000366 E972FF                  		jmp hang
-   765                                  		
-   766                                  
-   767                                  clear_command:
-   768                                  
-   769                                  		; Clear Screen
-   770                                  
-   771 00000369 CD27                    		int 27h
-   772                                  		
-   773 0000036B E96DFF                  		jmp hang
-   774                                  	
-   775                                  shutdown_command:
-   776                                  
-   777 0000036E CD33                    	int 33h
-   778 00000370 CD23                    	int 23h
-   779 00000372 B8[9606]                	mov ax, poweroff_failed
-   780 00000375 BB[D506]                	mov bx, current_color
-   781 00000378 CD21                    	int 21h
-   782 0000037A CD23                        int 23h
-   783                                  	
-   784 0000037C E95CFF                  	jmp hang
+   730 00000361 CD21                    	int 21h ; print ax=msg bl=blue
+   731                                  	
+   732 00000363 B8[9704]                	mov ax, drive
+   733 00000366 BB[2A08]                	mov bx, current_sector
+   734                                  	
+   735 00000369 CD21                    	int 21h ; print
+   736                                  	
+   737 0000036B B8[7508]                	mov ax, pwd
+   738 0000036E BB[2A08]                	mov bx, current_sector
+   739                                  	
+   740 00000371 CD21                    	int 21h ; print
+   741                                  	
+   742 00000373 B8[9A04]                	mov ax, arrow
+   743 00000376 BB[2908]                	mov bx, current_color
+   744                                  	
+   745 00000379 CD21                    	int 21h ; print
+   746                                  
+   747                                  	; Get Input
+   748 0000037B BB[B508]                	mov bx, buffer
+   749 0000037E CD22                    	int 22h ; Read From Keyboard  And Store String In Buffer
+   750                                  	
+   751 00000380 803F00                  	cmp byte[bx], 0 ; Empty command are ignored therefore
+   752                                  	
+   753 00000383 74D3                    	je hang
+   754                                  	
+   755 00000385 BB[B508]                	mov bx, buffer
+   756 00000388 B8[A007]                	mov ax, internal_command_A
+   757                                  	
+   758 0000038B CD30                    	int 30h ; string compare buffer and commandA
+   759                                  	
+   760 0000038D 83FA00                  	cmp dx, 0 
+   761                                  	
+   762 00000390 0F848D00                	je help_command ;if (buffer == command) goto help_command
+   763                                  	
+   764 00000394 BB[B508]                	mov bx, buffer
+   765 00000397 B8[A507]                	mov ax, internal_command_B
+   766                                  	
+   767 0000039A CD30                    	int 30h ; string compare buffer and commandB
+   768                                  	
+   769 0000039C 83FA00                  	cmp dx, 0 
+   770                                  	
+   771 0000039F 7461                    	je clear_command
+   772                                  	
+   773 000003A1 BB[B508]                	mov bx, buffer
+   774 000003A4 B8[AB07]                	mov ax, internal_command_C
+   775                                  	
+   776 000003A7 CD30                    	int 30h ; string compare buffer and commandC
+   777                                  	
+   778 000003A9 83FA00                  	cmp dx, 0 
+   779                                  	
+   780 000003AC 7438                    	je list_command
+   781                                  	
+   782                                  	
+   783 000003AE BB[B508]                	mov bx, buffer
+   784 000003B1 B8[B907]                	mov ax, internal_command_E
    785                                  	
-   786                                  	
-   787                                  date_command:
-   788                                  
-   789 0000037F CD23                    	int 23h
-   790                                  	
+   786 000003B4 CD30                    	int 30h ; string compare buffer and commandE
+   787                                  	
+   788 000003B6 83FA00                  	cmp dx, 0 
+   789                                  	
+   790 000003B9 745D                    	je date_command
    791                                  	
    792                                  	
-   793 00000381 CD34                    	int 34h ; Call date printing ISR
-   794                                  	
+   793 000003BB BB[B508]                	mov bx, buffer
+   794 000003BE B8[BE07]                	mov ax, internal_command_F
    795                                  	
-   796 00000383 CD23                    	int 23h
-   797                                  
-   798                                  
-   799 00000385 E953FF                  	jmp hang
-   800                                  	
-   801                                  help_command:
-   802                                  
-   803 00000388 CD23                    		int 23h ; Print newline
-   804                                  
-   805 0000038A B8[6004]                		mov ax, help_msg
-   806 0000038D BB[D506]                		mov bx, current_color
-   807 00000390 CD21                    		int 21h ; Print help string
-   808                                  
-   809 00000392 CD23                    		int 23h ; Print newline
-   810                                  		
-   811 00000394 E944FF                  		jmp hang
-   812                                  		
-   813                                  		
-   814                                  zero_buffer:
-   815                                  
-   816 00000397 B8[D606]                	mov ax, buffer
-   817 0000039A BB0C00                  	mov bx, 12
-   818 0000039D CD24                    	int 24h	
-   819                                  
-   820 0000039F C3                      ret 
-   821                                  		
-   822                                  
-   823                                  		
-   824 000003A0 4D6F6E737465724F53-     welcome_msg: db 'MonsterOS Version 1.0', 13, 10, 'Copyright (C) 2014 Daniel Lopez. Licensed Under The Simplified BSD License', 13, 10, 0
-   825 000003A9 2056657273696F6E20-
-   826 000003B2 312E300D0A436F7079-
-   827 000003BB 726967687420284329-
-   828 000003C4 20323031342044616E-
-   829 000003CD 69656C204C6F70657A-
-   830 000003D6 2E204C6963656E7365-
-   831 000003DF 6420556E6465722054-
-   832 000003E8 68652053696D706C69-
-   833 000003F1 666965642042534420-
-   834 000003FA 4C6963656E73650D0A-
-   835 00000403 00                 
-   836 00000404 6B65726E656C2E7379-     system_file db 'kernel.sys', 0
-   837 0000040D 7300               
-   838 0000040F 0D0A4572726F723A20-     error_system_file: db 13, 10, 'Error: kernel.sys is a system file cannot be executed or read!', 13, 10, 0
-   839 00000418 6B65726E656C2E7379-
-   840 00000421 732069732061207379-
-   841 0000042A 7374656D2066696C65-
-   842 00000433 2063616E6E6F742062-
-   843 0000043C 652065786563757465-
-   844 00000445 64206F722072656164-
-   845 0000044E 210D0A00           
-   846 00000452 0D0A4D6F6E73746572-     cli_msg: db 13, 10, 'MonsterOS> ', 0
-   847 0000045B 4F533E2000         
-   848 00000460 57656C636F6D652074-     help_msg: db 'Welcome to the MonsterOS shell prompt.', 13, 10, 13, 10, 'MonsterOS shell prompt contains only two internal commands: help, clear, and list.', 13, 10, 'This means that MonsterOS treats everything else 
-   849 00000469 6F20746865204D6F6E-
-   850 00000472 737465724F53207368-
-   851 0000047B 656C6C2070726F6D70-
-   852 00000484 742E0D0A0D0A4D6F6E-
-   853 0000048D 737465724F53207368-
-   854 00000496 656C6C2070726F6D70-
-   855 0000049F 7420636F6E7461696E-
-   856 000004A8 73206F6E6C79207477-
-   857 000004B1 6F20696E7465726E61-
-   858 000004BA 6C20636F6D6D616E64-
-   859 000004C3 733A2068656C702C20-
-   860 000004CC 636C6561722C20616E-
-   861 000004D5 64206C6973742E0D0A-
-   862 000004DE 54686973206D65616E-
-   863 000004E7 732074686174204D6F-
-   864 000004F0 6E737465724F532074-
-   865 000004F9 726561747320657665-
-   866 00000502 72797468696E672065-
-   867 0000050B 6C7365207468617420-
-   868 00000514 6973206E6F74207468-
-   869 0000051D 652068656C702F636C-
-   870 00000526 65617220636F6D6D61-
-   871 0000052F 6E6420617320616E20-
-   872 00000538 65787465726E616C20-
-   873 00000541 636F6D6D616E642E0D-
-   874 0000054A 0A416E206578746572-
-   875 00000553 6E616C20636F6D6D61-
-   876 0000055C 6E6420697320626173-
-   877 00000565 6963616C6C79206120-
-   878 0000056E 66696C656E616D6520-
-   879 00000577 6F6620612066696C65-
-   880 00000580 2073746F726564206F-
-   881 00000589 6E2074686520646973-
-   882 00000592 6B2E0A0D4966207468-
-   883 0000059B 652066696C65206973-
-   884 000005A4 206C6F636174656420-
-   885 000005AD 6F6E20746865206469-
-   886 000005B6 736B20697420697320-
-   887 000005BF 657865637574656420-
-   888 000005C8 696620697420697320-
-   889 000005D1 612070726F6772616D-
-   890 000005DA 3B20656C7365206974-
-   891 000005E3 206973207472656174-
-   892 000005EC 656420612074657874-
-   893 000005F5 2066696C6520616E64-
-   894 000005FE 2069747320636F6E74-
-   895 00000607 656E74732061726520-
-   896 00000610 646973706C61796564-
-   897 00000619 2E0D0A4966206E6F20-
-   898 00000622 66696C652069732066-
-   899 0000062B 6F756E64207468656E-
-   900 00000634 2061206572726F7220-
-   901 0000063D 6D6573736167652069-
-   902 00000646 7320646973706C6179-
-   903 0000064F 65642E00           
-   904 00000653 68656C7000              internal_command_A: db 'help', 0
-   905 00000658 636C65617200            internal_command_B: db 'clear', 0
-   906 0000065E 6C69737400              internal_command_C: db 'list', 0
-   907 00000663 706F7765726F666600      internal_command_D: db 'poweroff', 0
-   908 0000066C 6461746500              internal_command_E: db 'date', 00
-   909 00000671 496E76616C69642049-     invalid_cmd: db 'Invalid Internal / External Command!',0
-   910 0000067A 6E7465726E616C202F-
-   911 00000683 2045787465726E616C-
-   912 0000068C 20436F6D6D616E6421-
-   913 00000695 00                 
-   914 00000696 4D616368696E652066-     poweroff_failed: db 'Machine failed to shutdown!!!', 13, 10, 'Error: APM May Not Be Supported', 0
-   915 0000069F 61696C656420746F20-
-   916 000006A8 73687574646F776E21-
-   917 000006B1 21210D0A4572726F72-
-   918 000006BA 3A2041504D204D6179-
-   919 000006C3 204E6F742042652053-
-   920 000006CC 7570706F7274656400 
-   921 000006D5 01                      current_color: db 001h
-   922 000006D6 00<rept>                buffer: times 12 db 0
-   923                                  
-   924                                  
+   796 000003C1 CD30                    	int 30h ; string compare buffer and commandE
+   797                                  	
+   798 000003C3 83FA00                  	cmp dx, 0 
+   799                                  	
+   800 000003C6 0F849600                	je pwd_command
+   801                                  	
+   802 000003CA BB[B508]                	mov bx, buffer
+   803 000003CD B8[C207]                	mov ax, internal_command_G
+   804                                  	
+   805 000003D0 CD30                    	int 30h ; string compare buffer and commandE
+   806                                  	
+   807 000003D2 83FA00                  	cmp dx, 0 
+   808                                  	
+   809 000003D5 7459                    	je previous_dir_command
+   810                                  	
+   811                                  	
+   812 000003D7 BB[B508]                	mov bx, buffer
+   813 000003DA B8[B007]                	mov ax, internal_command_D
+   814                                  	
+   815 000003DD CD30                    	int 30h
+   816                                  	
+   817 000003DF 83FA00                  	cmp dx, 0
+   818                                  	
+   819 000003E2 7423                    	je shutdown_command
+   820                                  	
+   821 000003E4 EB10                    	jmp external_command
+   822                                  	
+   823                                  	
+   824                                  list_command:
+   825                                  
+   826 000003E6 CD23                    		int 23h ; Print newline
+   827 000003E8 BB[2A08]                		mov bx, current_sector
+   828 000003EB B400                    		mov ah, 00
+   829 000003ED 8A07                    		mov al, byte[bx]
+   830 000003EF CD32                    		int 32h ; List files from file table
+   831                                  		
+   832                                  		
+   833 000003F1 CD23                    		int 23h
+   834                                  		
+   835 000003F3 E962FF                  		jmp hang
+   836                                  	
+   837                                  external_command:
+   838                                  		
+   839 000003F6 CD23                    		int 23h ; new line
+   840                                  
+   841 000003F8 BB[B508]                		mov bx, buffer
+   842 000003FB CD31                    		int 31h ; Check if buffer contains a valid filename and load and execute external command.
+   843 000003FD CD23                    		int 23h ; new line
+   844                                  		
+   845 000003FF E956FF                  		jmp hang
+   846                                  		
+   847                                  
+   848                                  clear_command:
+   849                                  
+   850                                  		; Clear Screen
+   851                                  
+   852 00000402 CD27                    		int 27h
+   853                                  		
+   854 00000404 E951FF                  		jmp hang
+   855                                  	
+   856                                  shutdown_command:
+   857                                  
+   858 00000407 CD33                    	int 33h
+   859 00000409 CD23                    	int 23h
+   860 0000040B B8[EA07]                	mov ax, poweroff_failed
+   861 0000040E BB[2908]                	mov bx, current_color
+   862 00000411 CD21                    	int 21h
+   863 00000413 CD23                        int 23h
+   864                                  	
+   865 00000415 E940FF                  	jmp hang
+   866                                  	
+   867                                  	
+   868                                  date_command:
+   869                                  
+   870 00000418 CD23                    	int 23h
+   871                                  	
+   872                                  	
+   873                                  	
+   874 0000041A CD34                    	int 34h ; Call date printing ISR
+   875                                  	
+   876                                  	
+   877 0000041C CD23                    	int 23h
+   878                                  
+   879                                  
+   880 0000041E E937FF                  	jmp hang
+   881                                  	
+   882                                  help_command:
+   883                                  
+   884 00000421 CD23                    		int 23h ; Print newline
+   885                                  
+   886 00000423 B8[AD05]                		mov ax, help_msg
+   887 00000426 BB[2908]                		mov bx, current_color
+   888 00000429 CD21                    		int 21h ; Print help string
+   889                                  
+   890 0000042B CD23                    		int 23h ; Print newline
+   891                                  		
+   892 0000042D E928FF                  		jmp hang
+   893                                  		
+   894                                  previous_dir_command:
+   895                                  
+   896 00000430 A0[2A08]                mov al, byte[current_sector]
+   897 00000433 3C07                    cmp al, 7
+   898                                  
+   899 00000435 741A                    je root_dir_error
+   900                                  
+   901 00000437 BE[3508]                mov si, previous_pwd
+   902 0000043A BF[7508]                mov di, pwd
+   903 0000043D B94000                  mov cx, 64 
+   904 00000440 F3A4                    rep movsb  ; transfer previous pwd to pwd 
+   905                                  
+   906 00000442 BB[2B08]                mov bx, previous_sector
+   907 00000445 31C0                    xor ax, ax
+   908 00000447 8A07                    mov al, byte[bx]
+   909 00000449 BB[2A08]                mov bx, current_sector
+   910 0000044C 8807                    mov byte[bx], al ; Swap current_sector and previous sector
+   911                                  
+   912                                  
+   913                                  
+   914 0000044E E907FF                  jmp hang
+   915                                  
+   916                                  
+   917                                  root_dir_error:
+   918                                  
+   919 00000451 CD23                    	int 23h 
+   920 00000453 B8[9E04]                	mov ax, at_root
+   921 00000456 BB[2908]                	mov bx, current_color
+   922 00000459 CD21                    	int 21h
+   923 0000045B CD23                    	int 23h
+   924                                  	
+   925 0000045D E9F8FE                  	jmp hang
+   926                                  
+   927                                  		
+   928                                  pwd_command:
+   929                                  
+   930 00000460 CD23                    	int 23h ; new line 
+   931                                  	
+   932 00000462 B8[9704]                	mov ax, drive
+   933 00000465 CD21                    	int 21h ; print drive letter
+   934                                  
+   935 00000467 B8[7508]                	mov ax, pwd 
+   936 0000046A CD21                    	int 21h ; print current working directory 
+   937 0000046C CD23                    	int 23h ; new line 
+   938                                  	
+   939 0000046E E9E7FE                  	jmp hang
+   940                                  		
+   941                                  		
+   942                                  zero_buffer:
+   943                                  
+   944 00000471 B8[B508]                	mov ax, buffer
+   945 00000474 BB0C00                  	mov bx, 12
+   946 00000477 CD24                    	int 24h	
+   947                                  
+   948 00000479 C3                      ret 
+   949                                  
+   950                                  
+   951                                  get_drive_geometry:
+   952                                  
+   953 0000047A 31C0                    xor ax, ax
+   954 0000047C B408                    mov ah, 8h
+   955 0000047E CD13                    int 13h
+   956 00000480 80E13F                  and cl, 0x3f
+   957 00000483 880E[8F04]              mov byte[sectorsPerTrack], cl ; Store sectors per track
+   958 00000487 80EE01                  sub dh, 1
+   959 0000048A 8836[9004]              mov byte[heads], dh ; store number of heads
+   960                                   
+   961 0000048E C3                      ret 
+   962                                  
+   963 0000048F 00                      sectorsPerTrack: db 00
+   964 00000490 00                      heads: db 00
+   965 00000491 0000                    c dw 00
+   966 00000493 0000                    h dw 00
+   967 00000495 0000                    s dw 00
+   968 00000497 413A00                  drive: db 'A:', 0 
+   969 0000049A 3E00                    arrow: db '>', 0
+   970 0000049C 5C00                    root: db '\', 0
+   971 0000049E 4469726563746F7279-     at_root: db 'Directory does not have a parent directory! Already at root directory!', 0 
+   972 000004A7 20646F6573206E6F74-
+   973 000004B0 206861766520612070-
+   974 000004B9 6172656E7420646972-
+   975 000004C2 6563746F7279212041-
+   976 000004CB 6C7265616479206174-
+   977 000004D4 20726F6F7420646972-
+   978 000004DD 6563746F72792100   
+   979 000004E5 546869732069732061-     dir_found_msg: db 'This is a directory!', 13, 10, 'Would you like to change your current working directory? [y/n]: ', 0
+   980 000004EE 206469726563746F72-
+   981 000004F7 79210D0A576F756C64-
+   982 00000500 20796F75206C696B65-
+   983 00000509 20746F206368616E67-
+   984 00000512 6520796F7572206375-
+   985 0000051B 7272656E7420776F72-
+   986 00000524 6B696E672064697265-
+   987 0000052D 63746F72793F205B79-
+   988 00000536 2F6E5D3A2000       
+   989 0000053C 4D6F6E737465724F53-     welcome_msg: db 'MonsterOS Version 1.1', 13, 10, 'Copyright (C) 2014 Daniel Lopez. Licensed Under The Simplified BSD License', 13, 10, 0
+   990 00000545 2056657273696F6E20-
+   991 0000054E 312E310D0A436F7079-
+   992 00000557 726967687420284329-
+   993 00000560 20323031342044616E-
+   994 00000569 69656C204C6F70657A-
+   995 00000572 2E204C6963656E7365-
+   996 0000057B 6420556E6465722054-
+   997 00000584 68652053696D706C69-
+   998 0000058D 666965642042534420-
+   999 00000596 4C6963656E73650D0A-
+  1000 0000059F 00                 
+  1001 000005A0 0D0A4D6F6E73746572-     cli_msg: db 13, 10, 'MonsterOS ', 0
+  1002 000005A9 4F532000           
+  1003 000005AD 57656C636F6D652074-     help_msg: db 'Welcome to the MonsterOS shell prompt.', 13, 10, 13, 10, 'MonsterOS shell prompt contains only two internal commands: help, clear, and list.', 13, 10, 'This means that MonsterOS treats everything else 
+  1004 000005B6 6F20746865204D6F6E-
+  1005 000005BF 737465724F53207368-
+  1006 000005C8 656C6C2070726F6D70-
+  1007 000005D1 742E0D0A0D0A4D6F6E-
+  1008 000005DA 737465724F53207368-
+  1009 000005E3 656C6C2070726F6D70-
+  1010 000005EC 7420636F6E7461696E-
+  1011 000005F5 73206F6E6C79207477-
+  1012 000005FE 6F20696E7465726E61-
+  1013 00000607 6C20636F6D6D616E64-
+  1014 00000610 733A2068656C702C20-
+  1015 00000619 636C6561722C20616E-
+  1016 00000622 64206C6973742E0D0A-
+  1017 0000062B 54686973206D65616E-
+  1018 00000634 732074686174204D6F-
+  1019 0000063D 6E737465724F532074-
+  1020 00000646 726561747320657665-
+  1021 0000064F 72797468696E672065-
+  1022 00000658 6C7365207468617420-
+  1023 00000661 6973206E6F74207468-
+  1024 0000066A 652068656C702F636C-
+  1025 00000673 65617220636F6D6D61-
+  1026 0000067C 6E6420617320616E20-
+  1027 00000685 65787465726E616C20-
+  1028 0000068E 636F6D6D616E642E0D-
+  1029 00000697 0A416E206578746572-
+  1030 000006A0 6E616C20636F6D6D61-
+  1031 000006A9 6E6420697320626173-
+  1032 000006B2 6963616C6C79206120-
+  1033 000006BB 66696C656E616D6520-
+  1034 000006C4 6F6620612066696C65-
+  1035 000006CD 2073746F726564206F-
+  1036 000006D6 6E2074686520646973-
+  1037 000006DF 6B2E0A0D4966207468-
+  1038 000006E8 652066696C65206973-
+  1039 000006F1 206C6F636174656420-
+  1040 000006FA 6F6E20746865206469-
+  1041 00000703 736B20697420697320-
+  1042 0000070C 657865637574656420-
+  1043 00000715 696620697420697320-
+  1044 0000071E 612070726F6772616D-
+  1045 00000727 3B20656C7365206974-
+  1046 00000730 206973207472656174-
+  1047 00000739 656420612074657874-
+  1048 00000742 2066696C6520616E64-
+  1049 0000074B 2069747320636F6E74-
+  1050 00000754 656E74732061726520-
+  1051 0000075D 646973706C61796564-
+  1052 00000766 2E0D0A4966206E6F20-
+  1053 0000076F 66696C652069732066-
+  1054 00000778 6F756E64207468656E-
+  1055 00000781 2061206572726F7220-
+  1056 0000078A 6D6573736167652069-
+  1057 00000793 7320646973706C6179-
+  1058 0000079C 65642E00           
+  1059 000007A0 68656C7000              internal_command_A: db 'help', 0
+  1060 000007A5 636C65617200            internal_command_B: db 'clear', 0
+  1061 000007AB 6C69737400              internal_command_C: db 'list', 0
+  1062 000007B0 706F7765726F666600      internal_command_D: db 'poweroff', 0
+  1063 000007B9 6461746500              internal_command_E: db 'date', 00
+  1064 000007BE 70776400                internal_command_F: db 'pwd', 00
+  1065 000007C2 2E2E00                  internal_command_G: db '..', 00
+  1066 000007C5 496E76616C69642049-     invalid_cmd: db 'Invalid Internal / External Command!',0
+  1067 000007CE 6E7465726E616C202F-
+  1068 000007D7 2045787465726E616C-
+  1069 000007E0 20436F6D6D616E6421-
+  1070 000007E9 00                 
+  1071 000007EA 4D616368696E652066-     poweroff_failed: db 'Machine failed to shutdown!!!', 13, 10, 'Error: APM May Not Be Supported', 0
+  1072 000007F3 61696C656420746F20-
+  1073 000007FC 73687574646F776E21-
+  1074 00000805 21210D0A4572726F72-
+  1075 0000080E 3A2041504D204D6179-
+  1076 00000817 204E6F742042652053-
+  1077 00000820 7570706F7274656400 
+  1078 00000829 01                      current_color: db 001h
+  1079 0000082A 07                      current_sector: db 7
+  1080 0000082B 00                      previous_sector: db 0
+  1081 0000082C 00<rept>                temp: times 9 db 0
+  1082 00000835 00<rept>                previous_pwd: times 64 db 0
+  1083 00000875 00<rept>                pwd: times 64 db 0
+  1084 000008B5 00<rept>                buffer: times 64 db 0
+  1085                                  
+  1086 000008F5 00<rept>                times 2560-($-$$) db 0
+  1087                                  

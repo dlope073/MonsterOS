@@ -25,7 +25,7 @@ xor ax, ax ; make it zero
 mov ds, ax ; Data segment is zero
 mov es, ax
 
-
+call get_drive_geometry ; Get the drive geometry 
 
 ; Clear Screen
 
@@ -38,18 +38,36 @@ mov ax, welcome_msg ; Store pointer to string AX register
 mov bx, current_color ; Store current color in BX
 int 21h ; Call print ISR
 
+mov bx, pwd
+mov byte[bx], '\'
+
 
 hang:
 	
 
 	call zero_buffer
 	
-	; Print Desired Message
+	; Print Cli message plus current working path plus drive letter
 
 	mov ax, cli_msg
 	mov bx, current_color
 
 	int 21h ; print ax=msg bl=blue
+	
+	mov ax, drive
+	mov bx, current_sector
+	
+	int 21h ; print
+	
+	mov ax, pwd
+	mov bx, current_sector
+	
+	int 21h ; print
+	
+	mov ax, arrow
+	mov bx, current_color
+	
+	int 21h ; print
 
 	; Get Input
 	mov bx, buffer
@@ -98,6 +116,25 @@ hang:
 	
 	
 	mov bx, buffer
+	mov ax, internal_command_F
+	
+	int 30h ; string compare buffer and commandE
+	
+	cmp dx, 0 
+	
+	je pwd_command
+	
+	mov bx, buffer
+	mov ax, internal_command_G
+	
+	int 30h ; string compare buffer and commandE
+	
+	cmp dx, 0 
+	
+	je previous_dir_command
+	
+	
+	mov bx, buffer
 	mov ax, internal_command_D
 	
 	int 30h
@@ -112,38 +149,21 @@ hang:
 list_command:
 
 		int 23h ; Print newline
-
+		mov bx, current_sector
+		mov ah, 00
+		mov al, byte[bx]
 		int 32h ; List files from file table
 		
-		mov ax, system_file
-		mov bx, current_color
-		int 21h
+		
 		int 23h
 		
 		jmp hang
 	
 external_command:
-
-
-		mov bx, buffer
-		mov ax, system_file
-		int 30h
-
-		
-		cmp dx, 00h
-		
-		jne not_a_system_file
-		
-		mov ax, error_system_file
-		mov bx, current_color
-		int 21h
-		
-		jmp hang
-		
-not_a_system_file:
 		
 		int 23h ; new line
-		mov ax, buffer
+
+		mov bx, buffer
 		int 31h ; Check if buffer contains a valid filename and load and execute external command.
 		int 23h ; new line
 		
@@ -196,6 +216,53 @@ help_command:
 		
 		jmp hang
 		
+previous_dir_command:
+
+mov al, byte[current_sector]
+cmp al, 7
+
+je root_dir_error
+
+mov si, previous_pwd
+mov di, pwd
+mov cx, 64 
+rep movsb  ; transfer previous pwd to pwd 
+
+mov bx, previous_sector
+xor ax, ax
+mov al, byte[bx]
+mov bx, current_sector
+mov byte[bx], al ; Swap current_sector and previous sector
+
+
+
+jmp hang
+
+
+root_dir_error:
+
+	int 23h 
+	mov ax, at_root
+	mov bx, current_color
+	int 21h
+	int 23h
+	
+	jmp hang
+
+		
+pwd_command:
+
+	int 23h ; new line 
+	
+	mov ax, drive
+	int 21h ; print drive letter
+
+	mov ax, pwd 
+	int 21h ; print current working directory 
+	int 23h ; new line 
+	
+	jmp hang
+		
 		
 zero_buffer:
 
@@ -204,22 +271,49 @@ zero_buffer:
 	int 24h	
 
 ret 
-		
 
-		
-welcome_msg: db 'MonsterOS Version 1.0', 13, 10, 'Copyright (C) 2014 Daniel Lopez. Licensed Under The Simplified BSD License', 13, 10, 0
-system_file db 'kernel.sys', 0
-error_system_file: db 13, 10, 'Error: kernel.sys is a system file it cannot be executed or read!', 13, 10, 0
-cli_msg: db 13, 10, 'MonsterOS> ', 0
+
+get_drive_geometry:
+
+xor ax, ax
+mov ah, 8h
+int 13h
+and cl, 0x3f
+mov byte[sectorsPerTrack], cl ; Store sectors per track
+sub dh, 1
+mov byte[heads], dh ; store number of heads
+ 
+ret 
+
+sectorsPerTrack: db 00
+heads: db 00
+c dw 00
+h dw 00
+s dw 00
+drive: db 'A:', 0 
+arrow: db '>', 0
+root: db '\', 0
+at_root: db 'Directory does not have a parent directory! Already at root directory!', 0 
+dir_found_msg: db 'This is a directory!', 13, 10, 'Would you like to change your current working directory? [y/n]: ', 0
+welcome_msg: db 'MonsterOS Version 1.1', 13, 10, 'Copyright (C) 2014 Daniel Lopez. Licensed Under The Simplified BSD License', 13, 10, 0
+cli_msg: db 13, 10, 'MonsterOS ', 0
 help_msg: db 'Welcome to the MonsterOS shell prompt.', 13, 10, 13, 10, 'MonsterOS shell prompt contains only two internal commands: help, clear, and list.', 13, 10, 'This means that MonsterOS treats everything else that is not the help/clear command as an external command.', 13, 10, 'An external command is basically a filename of a file stored on the disk.', 10, 13, 'If the file is located on the disk it is executed if it is a program; else it is treated a text file and its contents are displayed.', 13, 10, 'If no file is found then a error message is displayed.', 0
 internal_command_A: db 'help', 0
 internal_command_B: db 'clear', 0
 internal_command_C: db 'list', 0
 internal_command_D: db 'poweroff', 0
 internal_command_E: db 'date', 00
+internal_command_F: db 'pwd', 00
+internal_command_G: db '..', 00
 invalid_cmd: db 'Invalid Internal / External Command!',0
 poweroff_failed: db 'Machine failed to shutdown!!!', 13, 10, 'Error: APM May Not Be Supported', 0
 current_color: db 001h
-buffer: times 12 db 0
+current_sector: db 7
+previous_sector: db 0
+temp: times 9 db 0
+previous_pwd: times 64 db 0
+pwd: times 64 db 0
+buffer: times 64 db 0
 
+times 2560-($-$$) db 0
 

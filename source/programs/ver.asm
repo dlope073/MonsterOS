@@ -16,5 +16,5 @@ _start: ; ver.com's entry point label name can be anything really
 	
 ret ; Return back to control
 
-ver_str: db 'MonsterOS Version 1.0', 0
+ver_str: db 'MonsterOS Version 1.1', 0
 

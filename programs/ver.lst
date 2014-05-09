@@ -16,7 +16,7 @@
     16                                  	
     17 00000009 C3                      ret ; Return back to control
     18                                  
-    19 0000000A 4D6F6E737465724F53-     ver_str: db 'MonsterOS Version 1.0', 0
+    19 0000000A 4D6F6E737465724F53-     ver_str: db 'MonsterOS Version 1.1', 0
     20 00000013 2056657273696F6E20-
-    21 0000001C 312E3000           
+    21 0000001C 312E3100           
     22                                  

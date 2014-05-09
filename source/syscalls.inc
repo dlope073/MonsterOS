@@ -66,16 +66,11 @@ mov [es:27h*4], dx
 mov ax, 0
 mov [es:27h*4 + 2], ax
 
-; Add another interrupt entry
 
-mov dx, int_check_file_struct
-mov [es:28h*4], dx
-mov ax, 0
-mov [es:28h*4 + 2], ax
 
-; Add another interrupt entry
+;Add another interrupt entry
 
-mov dx, int_write_file_struct
+mov dx, int_lbachs
 mov [es:29h*4], dx
 mov ax, 0
 mov [es:29h*4 + 2], ax
@@ -96,7 +91,7 @@ mov [es:31h*4 + 2], ax
 
 ; Add another interrupt entry
 
-mov dx, int_list_files_from_file_table
+mov dx, int_list_files_at_current_dir
 mov [es:32h*4], dx
 mov ax, 0
 mov [es:32h*4 + 2], ax
@@ -121,16 +116,28 @@ popa
 ret
 
 ;-----------------------------------------------------------------
-;Prints each file name from the file table located at 0x9e00
+; AX=Sector Of Starting Directory (Root always 5)
 
-int_list_files_from_file_table:
+int_list_files_at_current_dir:
 
 pusha
+
+	int 29h 
+
+	mov ch, byte[c] ; ch <- cylinder
+	mov cl, byte[s] ; cl <- sector
+	xor ax, ax
+	mov es, ax    ; ES <- 0
+	mov dh, byte[h]
+	mov dl, 80h ; DH = 0 (head), drive = 80h (0th hard disk)
+	mov bx, 0x9e00 ; segment offset of the buffer
+	mov ax, 0201h ; AH = 02 (disk read), AL = 01 (number of sectors to read)
+	int 13h
 	
 	mov cx, 0x9e01
 	mov dx, 0
 _loop___:
-	cmp dx, 20h
+	cmp dx, 46
 	je _exit____ ; Exit loop because there are not more FILE structure entries
 	mov si, cx
 	mov al, byte[si]
@@ -139,7 +146,7 @@ _loop___:
 	mov ax, cx
 	int 21h ; Print filename
 	int 23h ; Print new line
-	add cx, 0x200
+	add cx, 11
 	inc dx
 	jmp _loop___
 
@@ -149,68 +156,151 @@ popa
 
 iret
 
+
+
 ;-----------------------------------------------------------------
 ; Loads Program into memory. Using the filename of the program.
-; AX=Contains starting address of null-terminated string
-;
+; BX=Contains starting address of null-terminated string 
 int_load_program_by_filename:
 
 pusha
 
+
+	mov ah, 0
+	mov al, byte[current_sector]
+	int 29h ; lbachs
+
+	
+	push bx
+	mov ch, byte[c] ; ch <- cylinder
+	mov cl, byte[s] ; cl <- sector
+	xor ax, ax
+	mov es, ax    ; ES <- 0
+	mov dh, byte[h]
+	mov dl, 80h ; DH = 0 (head), drive = 80h (0th hard disk)
+	mov bx, 0x9e00 ; segment offset of the buffer
+	mov ax, 0201h ; AH = 02 (disk read), AL = 01 (number of sectors to read)
+	int 13h
+	pop bx
+	
 	mov cx, 0x9e01
 	mov dx, 0
-_loop__:
-	cmp dx, 10
-	je no_program_found ; Exit loop because there are no more FILE structure entries in the file table
+_loop1___:
+	cmp dx, 46
+	je  no_program_found; Exit loop because there are no more FILE structure entries
 	mov si, cx
-	cmp byte[si], 0
-	je no_program_found ; Exit if null string is found
-	mov bx, cx ; bx <- cx
+	mov al, byte[si]
+	cmp al, 0
+	je  no_program_found; Exit if null string is found
+	mov ax, cx
+	
+
+
+	; Copy a filename to temp as it will be used later
+	push cx
+	mov di, temp
+	mov si, ax
+	mov cx, 9
+	rep movsb
+	pop cx
+	
 	int 30h
 	or dx, dx
-	jz found_program ; If strings match then jump to found_program and start executing the program from memory
-	add cx, 0x200
+	jz found_program
+	add cx, 11
 	inc dx
-	jmp _loop__
+	
+
+	
+	jmp _loop1___
 	
 no_program_found:
 
 	mov ax, invalid_cmd
-	mov bx, 000fh
-	int 21h ; Print invalid command message
-
-jmp _exit___
-	
-found_program:
-	add cx, 13
-	mov si, cx
-	cmp byte[si], 0
-	je exec ; if al == 0 then file is program needs to be executed
-	
-	inc cx
-	mov ax, cx
 	int 21h
+	int 23h
+	jmp _exit1____
 	
-	jmp _exit___
+
+found_program:
+
+	  mov bx, cx
+	  cmp byte[bx-1], 0xff
+
+	  
+	  je its_a_directory
+	  
+	  mov bx, cx
+	  
+	  add bx, 9
+	  	  
+	  mov ah, 0
+	  mov al, byte[bx]
+	  int 29h ; lbachs	
+	  
 	
-exec:
-	copy_prog_in_mem: ; Copies program into 0x9999 because that is where all programs are loaded and executed
-			inc cx
-			mov bx, cx ; bx <- cx because cx cannot be used for this operation
-			mov di, 0x9999 ; Destination index is 0x9999 because that is where the program will be loaded
-			mov dx, 0 ; our counter
-			looop:
-			cmp dx, 497 ; 497 because 497 is the maximum number of bytes a program can be. Remember each file table entry occupies 512 bytes
-			je _call ; if dx = 497 then the program has been fully copied to the region in memory where it will be executed
-			mov  si, [bx] ; copy contents at address bx into source index
-			mov [di], si ; Move contents at source index and store it into the memory address at destination index
-			inc dx ; increment dx
-			inc di ; increment destination index
-			inc bx ; increment bx
-			jmp looop
-	_call:
-			call 0x9999 
-_exit___:
+	  mov ch, byte[c] ; ch <- cylinder
+	  mov cl, byte[s] ; cl <- sector
+	  xor ax, ax
+	  mov es, ax    ; ES <- 0
+	  mov dh, byte[h] 
+	  mov dl, 80h ; DH = pointed by h (head), drive = 80h (0th hard disk)
+	  mov ah, 02h
+	  mov al, byte[bx-10]         ; AH = 02 (disk read), AL = At address bx-10 (number of sectors to read)
+	  mov bx, 0x9999 ; segment offset of the buffer
+     
+	 
+	  int 13h
+
+	 
+	  call 0x9999
+	  
+	  jmp _exit1____
+	  
+its_a_directory:
+
+	push bx
+	mov bx, current_sector
+	xor ax, ax
+	mov al, byte[bx]
+	mov bx, previous_sector
+	mov byte[bx], al ; Swap previous_sector and current_sector
+	pop bx
+
+	mov bx, cx
+	mov dl, byte[bx+9]
+	mov bh, 00
+	mov bl, dl
+	mov byte[current_sector], bl ; Update current sector 
+
+	call zero_buffer
+	mov ax, dir_found_msg
+	int 21h 
+	mov bx, buffer
+    int 22h ; Read From Keyboard  And Store String In Buffer
+	cmp byte[bx], 'n'
+	je _exit1____
+	cmp byte[bx], 'y'	
+	jne _exit1____
+	
+change_cwd:
+
+	 mov si, pwd
+	 mov di, previous_pwd
+ 	 mov cx, 64 
+	 rep movsb  ; transfer  pwd to previous pwd 
+
+	 mov bx, pwd ; bx <- pwd
+	 mov byte[bx], '\' ; Add path sep char
+	 inc bx
+	 mov di, bx ; pwd destination
+	 mov si, temp  ; temp source
+	 mov cx, 9
+	 rep movsb ; transfer temp to pwd
+	 
+
+	
+_exit1____:
 	
 popa
 
@@ -250,80 +340,13 @@ pop cx ; restore cx
 
 iret
 
-;-----------------------------------------------------------------
-; Checks To See If An Existing FILE structure exists on a specific sector on the disk
-; Params: AX = Sector To Check If FILE 
-; Returns The Status In AX. If AX is zero there is an existing FILE structure currently on the disk.
-; Any other value would mean it is safe to write a FILE structure at that sector
-int_check_file_struct:
-
-push cx
-push es
-push dx
-push bx
-
-mov cx, ax    ; Sector ax
-xor ax, ax
-mov es, ax    ; ES <- 0
-mov dx, 0080h ; DH = 0 (head), drive = 80h (0th hard disk)
-mov bx, 2000h ; segment offset of the buffer
-mov ax, 0201h ; AH = 02 (disk read), AL = 01 (number of sectors to read)
-int 13h
-
-mov cx, [bx]
-cmp cx, 0x69
-je file_exists
-
-mov ax, 1
-
-jmp __exit ; File doesnt exist
-
-file_exists:
-
-xor ax, ax
-
-__exit:
 
 
-pop bx
-pop dx
-pop es
-pop cx
 
-iret
 
 ;-----------------------------------------------------------------
-; Writes A FILE structure on the disk. 
-; Params: BX=Starting Address of FILE structure CX=Sector To Write
-; Returns AX= -1 if failed to write 
-int_write_file_struct:
+; Clears the screen -- it requires no arguments 
 
-pusha
-
-	mov ax, bx
-	int 28h
-	or ax, ax
-	jz _error_
-	
-	xor ax, ax
-	mov es, ax    ; ES <- 0
-	mov dx, 0080h ; DH = 0 (head), drive = 80h (0th hard disk)
-	mov ax, 0301h ; AH = 03 (disk write), AL = 01 (number of sectors to write)
-	int 13h
-	
-	jmp _____exit
-	
-_error_:
-
-	mov ax, -1
-
-_____exit:
-	
-popa
-
-iret 
-
-;-----------------------------------------------------------------
 
 int_clear_screen:
 
@@ -557,6 +580,7 @@ popa ; Restore regs
 iret
 
 ;------------------------------------------------------------------------------------------------------
+; No parameters -- Reads RTC to get current date 
 
 int_date:
 
@@ -611,4 +635,41 @@ popa
 done:
 
 iret
+
+;--------------------------------------------------------------------------------------------------------------------------------------------------------
+; Converts LBA to CHS and stores the CHS result in memory
+
+
+
+int_lbachs:
+
+pusha
+
+ push dx			; save the value in dx
+ xor dx,dx		; zero dx
+ mov bx, [sectorsPerTrack]	; move into place stp (lba all ready in place)
+ div bx			; make the divide (ax/bx -> ax,dx)
+ inc dx			; add one to the remainder (sector value)
+ push dx			; save the sector value on the stack
+
+ xor dx,dx		; zero dx
+ mov bx, [heads]	; move numheads into place (numtracks all ready in place)
+ div bx			; make the divide (ax/bx -> ax,dx)
+
+ mov cx,ax		; move ax to cx (cylinder)
+ mov bx,dx		; move dx to bx (head)
+ pop ax			; take the last value entered on the stack off.
+			; it doesn't need to go into the same register.
+			; (sector)
+ pop dx			; restore dx, just in case something important was
+			; originally in there before running this.
+mov word[c], cx
+mov word[h], bx
+mov word[s], ax			
+	
+popa 
+
+ 
+ iret
+
 
